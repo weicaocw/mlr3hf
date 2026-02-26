@@ -9,7 +9,7 @@ website:
       - text: "Home"
         href: index.qmd
       - text: "Easy Task"
-        href: mlr3hf/entry_tasks/easy/live_report/easy_task_live_report.qmd
+        href: entry_tasks/easy/live_report/easy_task_live_report.qmd
 
 format:
   html:
