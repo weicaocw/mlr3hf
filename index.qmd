@@ -1,0 +1,7 @@
+---
+title: "Welcome to My GSoC Journal"
+---
+
+Welcome to my GSoC 2026 `mlr3hf` project journal.
+
+Use the navigation bar to browse project reports, including the Easy Task write-up.

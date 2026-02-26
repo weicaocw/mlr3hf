@@ -1,0 +1,17 @@
+project:
+  type: website
+
+website:
+  title: "Cao Wei's mlr3hf Journey"
+  description: "GSoC 2026 mlr3hf Project Reports"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Easy Task"
+        href: mlr3hf/entry_tasks/easy/live_report/easy_task_live_report.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
