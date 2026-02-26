@@ -19,6 +19,7 @@ execute:
 This report explores the `ostk` in `mlr3oml` package, analyzing its data retrieval mechanisms, format preferences (ARFF vs. Parquet).
 
 This experiment runs on an AutoDL cloud server with the following environment and hardware/software configuration:
+
 - Image: PyTorch 2.5.1 + Python 3.12 (Ubuntu 22.04) + CUDA 12.4
 - GPU: 1 × NVIDIA RTX 3060 (12GB)
 - CPU: 7 vCPU Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
