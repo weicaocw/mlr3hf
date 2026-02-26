@@ -9,7 +9,7 @@
 <meta name="author" content="Cao Wei">
 <meta name="dcterms.date" content="2026-02-27">
 
-<title>mlr3hf Easy Task: Deep Dive into mlr3oml and Data Fetching</title>
+<title>mlr3hf Easy Task: Deep Dive into mlr3oml and Data Fetching – Cao Wei’s mlr3hf Journey</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -60,28 +60,94 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="easy_task_live_report_files/libs/clipboard/clipboard.min.js"></script>
-<script src="easy_task_live_report_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="easy_task_live_report_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="easy_task_live_report_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="easy_task_live_report_files/libs/quarto-html/popper.min.js"></script>
-<script src="easy_task_live_report_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="easy_task_live_report_files/libs/quarto-html/anchor.min.js"></script>
-<link href="easy_task_live_report_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="easy_task_live_report_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="easy_task_live_report_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="easy_task_live_report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="easy_task_live_report_files/libs/bootstrap/bootstrap-4d7f0bce1131f3e5f9547cd857cfbfc8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-e31584831b205ffbb2d98406f31c2a5b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
 
 
 </head>
 
-<body class="quarto-light">
+<body class="nav-fixed quarto-light">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Cao Wei’s mlr3hf Journey</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../entry_tasks/easy/live_report/easy_task_live_report.html" aria-current="page"> 
+<span class="menu-text">Easy Task</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
    
   <ul>
   <li><a href="#introduction-basic-usage" id="toc-introduction-basic-usage" class="nav-link active" data-scroll-target="#introduction-basic-usage">1. Introduction &amp; Basic Usage</a>
@@ -99,7 +165,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">4. Conclusion</a></li>
   </ul>
 </nav>
-</div>
+    </div>
+<!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -136,7 +203,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-basic-usage" class="level1">
 <h1>1. Introduction &amp; Basic Usage</h1>
 <p>This report explores the <code>ostk</code> in <code>mlr3oml</code> package, analyzing its data retrieval mechanisms, format preferences (ARFF vs.&nbsp;Parquet).</p>
-<p>This experiment runs on an AutoDL cloud server with the following environment and hardware/software configuration: - Image: PyTorch 2.5.1 + Python 3.12 (Ubuntu 22.04) + CUDA 12.4 - GPU: 1 × NVIDIA RTX 3060 (12GB) - CPU: 7 vCPU Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz - Memory: 15GB - Disk: 30GB system disk, free 50GB SSD data disk (no paid disk), no additional disk - Port mapping: None - Custom service ports: 6006 (HTTP), 6008 (HTTP) - Networking: Shared bandwidth with other instances in the same region</p>
+<p>This experiment runs on an AutoDL cloud server with the following environment and hardware/software configuration:</p>
+<ul>
+<li>Image: PyTorch 2.5.1 + Python 3.12 (Ubuntu 22.04) + CUDA 12.4</li>
+<li>GPU: 1 × NVIDIA RTX 3060 (12GB)</li>
+<li>CPU: 7 vCPU Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz</li>
+<li>Memory: 15GB</li>
+<li>Disk: 30GB system disk, free 50GB SSD data disk (no paid disk), no additional disk</li>
+<li>Port mapping: None</li>
+<li>Custom service ports: 6006 (HTTP), 6008 (HTTP)</li>
+<li>Networking: Shared bandwidth with other instances in the same region</li>
+</ul>
 <p>Based on the <a href="https://mlr3oml.mlr-org.com/index.html">mlr3oml documentation</a>, we can easily fetch an OpenML task. I set the cache to FALSE to avoid the cache files from the previous experiments.</p>
 <div class="cell">
 <details open="" class="code-fold">
@@ -491,12 +568,13 @@ You can install them with:</p>
 <p>I provided a <a href="https://github.com/weicaocw/mlr3-pkgs/blob/main/mlr3hf/entry_tasks/easy/comprehensive_comparison_arff_parquet.r">R script</a> to test the speed and size of ARFF vs.&nbsp;Parquet for the small dataset: kr-vs-kp and a very large dataset: physionet_sepsis (1552210*44).</p>
 <p>The results showed that Parquet is a possibly better choice for large datasets with less download time and less space consumption. ARFF are downloaded and converted to qs2 format to cache instantly. Loading from the cache, ARFF is faster than Parquet. It is evident that the loading of both formats use multiple cores.</p>
 <p>One final remark: I really wanted to explore is there any performance difference while analyzing a large dataset with ARFF and Parquet, especially when the queries are parquet-friendly. Or is it not format-dependent once the data is loaded? But it is beyond the scope of this report.</p>
+
+
 <!-- -->
 
 </section>
 
-</main>
-<!-- /main column -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -621,7 +699,7 @@ You can install them with:</p>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/weicaocw\.github\.io\/mlr3hf\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -969,360 +1047,361 @@ You can install them with:</p>
 <span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>This report explores the <span class="in">`ostk`</span> in <span class="in">`mlr3oml`</span> package, analyzing its data retrieval mechanisms, format preferences (ARFF vs. Parquet).</span>
 <span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>This experiment runs on an AutoDL cloud server with the following environment and hardware/software configuration:</span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Image: PyTorch 2.5.1 + Python 3.12 (Ubuntu 22.04) + CUDA 12.4</span>
-<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>GPU: 1 × NVIDIA RTX 3060 (12GB)</span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>CPU: 7 vCPU Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz</span>
-<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Memory: 15GB</span>
-<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Disk: 30GB system disk, free 50GB SSD data disk (no paid disk), no additional disk</span>
-<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Port mapping: None</span>
-<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Custom service ports: 6006 (HTTP), 6008 (HTTP)</span>
-<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Networking: Shared bandwidth with other instances in the same region</span>
-<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>Based on the <span class="co">[</span><span class="ot">mlr3oml documentation</span><span class="co">](https://mlr3oml.mlr-org.com/index.html)</span>, we can easily fetch an OpenML task. I set the cache to FALSE to avoid the cache files from the previous experiments.</span>
-<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{r set_cache_false}</span></span>
-<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mlr3oml.cache =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.1 Classification Task 1: kr-vs-kp</span></span>
-<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a>With task ID 145953, <span class="co">[</span><span class="ot">"Supervised Classification on kr-vs-kp"</span><span class="co">](https://www.openml.org/search?type=task&amp;id=145953)</span> is a supervised classification task. The corresponding dataset <span class="co">[</span><span class="ot">"kr-vs-kp"</span><span class="co">](https://www.openml.org/d/3)</span> has 3196 instances and 37 features, which is a small dataset.</span>
-<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Image: PyTorch 2.5.1 + Python 3.12 (Ubuntu 22.04) + CUDA 12.4</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>GPU: 1 × NVIDIA RTX 3060 (12GB)</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>CPU: 7 vCPU Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Memory: 15GB</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Disk: 30GB system disk, free 50GB SSD data disk (no paid disk), no additional disk</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Port mapping: None</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Custom service ports: 6006 (HTTP), 6008 (HTTP)</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Networking: Shared bandwidth with other instances in the same region</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>Based on the <span class="co">[</span><span class="ot">mlr3oml documentation</span><span class="co">](https://mlr3oml.mlr-org.com/index.html)</span>, we can easily fetch an OpenML task. I set the cache to FALSE to avoid the cache files from the previous experiments.</span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="in">```{r set_cache_false}</span></span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mlr3oml.cache =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.1 Classification Task 1: kr-vs-kp</span></span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a>With task ID 145953, <span class="co">[</span><span class="ot">"Supervised Classification on kr-vs-kp"</span><span class="co">](https://www.openml.org/search?type=task&amp;id=145953)</span> is a supervised classification task. The corresponding dataset <span class="co">[</span><span class="ot">"kr-vs-kp"</span><span class="co">](https://www.openml.org/d/3)</span> has 3196 instances and 37 features, which is a small dataset.</span>
 <span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup}</span></span>
-<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3oml)</span>
-<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3)</span>
-<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Download and print the OpenML task with ID 145953</span></span>
-<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a>oml_task <span class="ot">&lt;-</span> <span class="fu">otsk</span>(<span class="dv">145953</span>)</span>
-<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a>oml_task</span>
-<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-49"><a href="#cb29-49" aria-hidden="true" tabindex="-1"></a>I don't mind walking through the document to have a first taste of the package.</span>
-<span id="cb29-50"><a href="#cb29-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r access_data}</span></span>
-<span id="cb29-51"><a href="#cb29-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Access the OpenML data object on which the task is built</span></span>
-<span id="cb29-52"><a href="#cb29-52" aria-hidden="true" tabindex="-1"></a>oml_task<span class="sc">$</span>data</span>
-<span id="cb29-53"><a href="#cb29-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-54"><a href="#cb29-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-55"><a href="#cb29-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r convert_task}</span></span>
-<span id="cb29-56"><a href="#cb29-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the OpenML task to an mlr3 task and resampling</span></span>
-<span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task</span>(oml_task)</span>
-<span id="cb29-58"><a href="#cb29-58" aria-hidden="true" tabindex="-1"></a>resampling <span class="ot">&lt;-</span> <span class="fu">as_resampling</span>(oml_task)</span>
-<span id="cb29-59"><a href="#cb29-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-60"><a href="#cb29-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Conduct a simple resample experiment</span></span>
-<span id="cb29-61"><a href="#cb29-61" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> <span class="fu">resample</span>(task, <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>), resampling)</span>
-<span id="cb29-62"><a href="#cb29-62" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span><span class="fu">aggregate</span>()</span>
-<span id="cb29-63"><a href="#cb29-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-64"><a href="#cb29-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-65"><a href="#cb29-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.2 Classification Task 2: Supervised Classification on higgs</span></span>
-<span id="cb29-66"><a href="#cb29-66" aria-hidden="true" tabindex="-1"></a>With task ID 146606, <span class="co">[</span><span class="ot">"Supervised Classification on higgs"</span><span class="co">](https://www.openml.org/search?type=task&amp;qualities.NumberOfClasses=%3D_2&amp;id=146606&amp;source_data.data_id=23512)</span> is also a supervised classification task. The corresponding dataset <span class="co">[</span><span class="ot">"higgs"</span><span class="co">](https://www.openml.org/search?type=data&amp;id=23512&amp;sort=runs&amp;status=active)</span> has 98050 instances and 29 features, which is a larger dataset.</span>
-<span id="cb29-67"><a href="#cb29-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-68"><a href="#cb29-68" aria-hidden="true" tabindex="-1"></a>We also walk through the document for this task.</span>
-<span id="cb29-69"><a href="#cb29-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r access_data_2}</span></span>
-<span id="cb29-70"><a href="#cb29-70" aria-hidden="true" tabindex="-1"></a>oml_task <span class="ot">&lt;-</span> <span class="fu">otsk</span>(<span class="dv">146606</span>)</span>
-<span id="cb29-71"><a href="#cb29-71" aria-hidden="true" tabindex="-1"></a>oml_task</span>
-<span id="cb29-72"><a href="#cb29-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-73"><a href="#cb29-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-74"><a href="#cb29-74" aria-hidden="true" tabindex="-1"></a><span class="in">```{r convert_task_2}</span></span>
-<span id="cb29-75"><a href="#cb29-75" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task</span>(oml_task)</span>
-<span id="cb29-76"><a href="#cb29-76" aria-hidden="true" tabindex="-1"></a>resampling <span class="ot">&lt;-</span> <span class="fu">as_resampling</span>(oml_task)</span>
-<span id="cb29-77"><a href="#cb29-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-78"><a href="#cb29-78" aria-hidden="true" tabindex="-1"></a><span class="co"># Conduct a simple resample experiment</span></span>
-<span id="cb29-79"><a href="#cb29-79" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> <span class="fu">resample</span>(task, <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>), resampling)</span>
-<span id="cb29-80"><a href="#cb29-80" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span><span class="fu">aggregate</span>()</span>
-<span id="cb29-81"><a href="#cb29-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-82"><a href="#cb29-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup}</span></span>
+<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3oml)</span>
+<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3)</span>
+<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Download and print the OpenML task with ID 145953</span></span>
+<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a>oml_task <span class="ot">&lt;-</span> <span class="fu">otsk</span>(<span class="dv">145953</span>)</span>
+<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a>oml_task</span>
+<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-49"><a href="#cb29-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-50"><a href="#cb29-50" aria-hidden="true" tabindex="-1"></a>I don't mind walking through the document to have a first taste of the package.</span>
+<span id="cb29-51"><a href="#cb29-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r access_data}</span></span>
+<span id="cb29-52"><a href="#cb29-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Access the OpenML data object on which the task is built</span></span>
+<span id="cb29-53"><a href="#cb29-53" aria-hidden="true" tabindex="-1"></a>oml_task<span class="sc">$</span>data</span>
+<span id="cb29-54"><a href="#cb29-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-55"><a href="#cb29-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-56"><a href="#cb29-56" aria-hidden="true" tabindex="-1"></a><span class="in">```{r convert_task}</span></span>
+<span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the OpenML task to an mlr3 task and resampling</span></span>
+<span id="cb29-58"><a href="#cb29-58" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task</span>(oml_task)</span>
+<span id="cb29-59"><a href="#cb29-59" aria-hidden="true" tabindex="-1"></a>resampling <span class="ot">&lt;-</span> <span class="fu">as_resampling</span>(oml_task)</span>
+<span id="cb29-60"><a href="#cb29-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-61"><a href="#cb29-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Conduct a simple resample experiment</span></span>
+<span id="cb29-62"><a href="#cb29-62" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> <span class="fu">resample</span>(task, <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>), resampling)</span>
+<span id="cb29-63"><a href="#cb29-63" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span><span class="fu">aggregate</span>()</span>
+<span id="cb29-64"><a href="#cb29-64" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-65"><a href="#cb29-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-66"><a href="#cb29-66" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.2 Classification Task 2: Supervised Classification on higgs</span></span>
+<span id="cb29-67"><a href="#cb29-67" aria-hidden="true" tabindex="-1"></a>With task ID 146606, <span class="co">[</span><span class="ot">"Supervised Classification on higgs"</span><span class="co">](https://www.openml.org/search?type=task&amp;qualities.NumberOfClasses=%3D_2&amp;id=146606&amp;source_data.data_id=23512)</span> is also a supervised classification task. The corresponding dataset <span class="co">[</span><span class="ot">"higgs"</span><span class="co">](https://www.openml.org/search?type=data&amp;id=23512&amp;sort=runs&amp;status=active)</span> has 98050 instances and 29 features, which is a larger dataset.</span>
+<span id="cb29-68"><a href="#cb29-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-69"><a href="#cb29-69" aria-hidden="true" tabindex="-1"></a>We also walk through the document for this task.</span>
+<span id="cb29-70"><a href="#cb29-70" aria-hidden="true" tabindex="-1"></a><span class="in">```{r access_data_2}</span></span>
+<span id="cb29-71"><a href="#cb29-71" aria-hidden="true" tabindex="-1"></a>oml_task <span class="ot">&lt;-</span> <span class="fu">otsk</span>(<span class="dv">146606</span>)</span>
+<span id="cb29-72"><a href="#cb29-72" aria-hidden="true" tabindex="-1"></a>oml_task</span>
+<span id="cb29-73"><a href="#cb29-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-74"><a href="#cb29-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-75"><a href="#cb29-75" aria-hidden="true" tabindex="-1"></a><span class="in">```{r convert_task_2}</span></span>
+<span id="cb29-76"><a href="#cb29-76" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task</span>(oml_task)</span>
+<span id="cb29-77"><a href="#cb29-77" aria-hidden="true" tabindex="-1"></a>resampling <span class="ot">&lt;-</span> <span class="fu">as_resampling</span>(oml_task)</span>
+<span id="cb29-78"><a href="#cb29-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-79"><a href="#cb29-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Conduct a simple resample experiment</span></span>
+<span id="cb29-80"><a href="#cb29-80" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> <span class="fu">resample</span>(task, <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>), resampling)</span>
+<span id="cb29-81"><a href="#cb29-81" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span><span class="fu">aggregate</span>()</span>
+<span id="cb29-82"><a href="#cb29-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-83"><a href="#cb29-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-84"><a href="#cb29-84" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.3 Observations</span></span>
-<span id="cb29-85"><a href="#cb29-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-86"><a href="#cb29-86" aria-hidden="true" tabindex="-1"></a>In the blink of an eye, the resample task for the small dataset is completed. However, for the large dataset, it takes time.</span>
-<span id="cb29-87"><a href="#cb29-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-88"><a href="#cb29-88" aria-hidden="true" tabindex="-1"></a>While using <span class="in">`ostk`</span> to access the data, we can see the following logs:</span>
-<span id="cb29-89"><a href="#cb29-89" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
-<span id="cb29-90"><a href="#cb29-90" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:05.482</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/task/146606</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-91"><a href="#cb29-91" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:06.064</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/qualities/23512</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-92"><a href="#cb29-92" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:06.622</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/features/23512</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-93"><a href="#cb29-93" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:07.123</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/23512</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-94"><a href="#cb29-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-95"><a href="#cb29-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-96"><a href="#cb29-96" aria-hidden="true" tabindex="-1"></a>Only JSON metadata is downloaded, the ARFF data file is not downloaded until <span class="in">`as_task`</span> and <span class="in">`as_resampling`</span> are called.</span>
-<span id="cb29-97"><a href="#cb29-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-98"><a href="#cb29-98" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
-<span id="cb29-99"><a href="#cb29-99" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:07.650</span><span class="pp">]</span> Retrieving ARFF {url: <span class="kw">`</span><span class="ex">https://openml.org/data/v1/download/2063675/higgs.arff</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-100"><a href="#cb29-100" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:25.445</span><span class="pp">]</span> Retrieving ARFF {url: <span class="kw">`</span><span class="ex">https://openml.org/api_splits/get/146606/Task_146606_splits.arff</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-101"><a href="#cb29-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-102"><a href="#cb29-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-103"><a href="#cb29-103" aria-hidden="true" tabindex="-1"></a>In fact, the ARFF data file is not downloaded until <span class="in">`as_task`</span> is called, and the splits file is not downloaded until <span class="in">`as_resampling`</span> is called. We will examine the source code to understand the data fetching process later.</span>
-<span id="cb29-104"><a href="#cb29-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-105"><a href="#cb29-105" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Parameter Analysis: `otsk()`</span></span>
-<span id="cb29-106"><a href="#cb29-106" aria-hidden="true" tabindex="-1"></a>The signature for <span class="in">`otsk`</span> is: <span class="in">`otsk(id, parquet = parquet_default(), test_server = test_server_default())`</span>, according to the <span class="co">[</span><span class="ot">official documentation</span><span class="co">](https://mlr3oml.mlr-org.com/reference/otsk.html)</span>.</span>
-<span id="cb29-107"><a href="#cb29-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-108"><a href="#cb29-108" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.1 The `test_server` Typing Inconsistency</span></span>
-<span id="cb29-109"><a href="#cb29-109" aria-hidden="true" tabindex="-1"></a>The documentation specifies <span class="in">`test_server`</span> as <span class="in">`character(1)`</span>, yet the default fallback is <span class="in">`FALSE`</span>. This is a slight typing inconsistency in the documentation. In practice, standard users should rely on the default (Public Server) to access real datasets. Here I won't explore the <span class="in">`test_server`</span> parameter in detail.</span>
-<span id="cb29-110"><a href="#cb29-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-111"><a href="#cb29-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.2 ARFF vs. Parquet</span></span>
-<span id="cb29-112"><a href="#cb29-112" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**ARFF**: An ARFF (Attribute-Relation File Format) file is an ASCII text file that describes a list of instances sharing a set of attributes. According to <span class="co">[</span><span class="ot">weka-wiki</span><span class="co">](https://waikato.github.io/weka-wiki/formats_and_processing/arff_stable/)</span>, each instance is represented on a single line, with carriage returns denoting the end of the instance. So it is a row-oriented plain text format.</span>
-<span id="cb29-113"><a href="#cb29-113" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Parquet**: According to the <span class="co">[</span><span class="ot">Apache Parquet documentation</span><span class="co">](https://parquet.apache.org/docs/)</span>, Apache Parquet is an open source, column-oriented data file format designed for efficient data storage and retrieval. It provides high performance compression and encoding schemes to handle complex data in bulk and is supported in many programming languages and analytics tools. I remember that the startup DB company I joined in 2021 had a self-developed storage engine based on Parquet, aiming to improve the performance in time-series data analysis.</span>
-<span id="cb29-114"><a href="#cb29-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-84"><a href="#cb29-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-85"><a href="#cb29-85" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.3 Observations</span></span>
+<span id="cb29-86"><a href="#cb29-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-87"><a href="#cb29-87" aria-hidden="true" tabindex="-1"></a>In the blink of an eye, the resample task for the small dataset is completed. However, for the large dataset, it takes time.</span>
+<span id="cb29-88"><a href="#cb29-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-89"><a href="#cb29-89" aria-hidden="true" tabindex="-1"></a>While using <span class="in">`ostk`</span> to access the data, we can see the following logs:</span>
+<span id="cb29-90"><a href="#cb29-90" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb29-91"><a href="#cb29-91" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:05.482</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/task/146606</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-92"><a href="#cb29-92" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:06.064</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/qualities/23512</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-93"><a href="#cb29-93" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:06.622</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/features/23512</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-94"><a href="#cb29-94" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:07.123</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/23512</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-95"><a href="#cb29-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-96"><a href="#cb29-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-97"><a href="#cb29-97" aria-hidden="true" tabindex="-1"></a>Only JSON metadata is downloaded, the ARFF data file is not downloaded until <span class="in">`as_task`</span> and <span class="in">`as_resampling`</span> are called.</span>
+<span id="cb29-98"><a href="#cb29-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-99"><a href="#cb29-99" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb29-100"><a href="#cb29-100" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:07.650</span><span class="pp">]</span> Retrieving ARFF {url: <span class="kw">`</span><span class="ex">https://openml.org/data/v1/download/2063675/higgs.arff</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-101"><a href="#cb29-101" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">23:32:25.445</span><span class="pp">]</span> Retrieving ARFF {url: <span class="kw">`</span><span class="ex">https://openml.org/api_splits/get/146606/Task_146606_splits.arff</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-102"><a href="#cb29-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-103"><a href="#cb29-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-104"><a href="#cb29-104" aria-hidden="true" tabindex="-1"></a>In fact, the ARFF data file is not downloaded until <span class="in">`as_task`</span> is called, and the splits file is not downloaded until <span class="in">`as_resampling`</span> is called. We will examine the source code to understand the data fetching process later.</span>
+<span id="cb29-105"><a href="#cb29-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-106"><a href="#cb29-106" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Parameter Analysis: `otsk()`</span></span>
+<span id="cb29-107"><a href="#cb29-107" aria-hidden="true" tabindex="-1"></a>The signature for <span class="in">`otsk`</span> is: <span class="in">`otsk(id, parquet = parquet_default(), test_server = test_server_default())`</span>, according to the <span class="co">[</span><span class="ot">official documentation</span><span class="co">](https://mlr3oml.mlr-org.com/reference/otsk.html)</span>.</span>
+<span id="cb29-108"><a href="#cb29-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-109"><a href="#cb29-109" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.1 The `test_server` Typing Inconsistency</span></span>
+<span id="cb29-110"><a href="#cb29-110" aria-hidden="true" tabindex="-1"></a>The documentation specifies <span class="in">`test_server`</span> as <span class="in">`character(1)`</span>, yet the default fallback is <span class="in">`FALSE`</span>. This is a slight typing inconsistency in the documentation. In practice, standard users should rely on the default (Public Server) to access real datasets. Here I won't explore the <span class="in">`test_server`</span> parameter in detail.</span>
+<span id="cb29-111"><a href="#cb29-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-112"><a href="#cb29-112" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.2 ARFF vs. Parquet</span></span>
+<span id="cb29-113"><a href="#cb29-113" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**ARFF**: An ARFF (Attribute-Relation File Format) file is an ASCII text file that describes a list of instances sharing a set of attributes. According to <span class="co">[</span><span class="ot">weka-wiki</span><span class="co">](https://waikato.github.io/weka-wiki/formats_and_processing/arff_stable/)</span>, each instance is represented on a single line, with carriage returns denoting the end of the instance. So it is a row-oriented plain text format.</span>
+<span id="cb29-114"><a href="#cb29-114" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Parquet**: According to the <span class="co">[</span><span class="ot">Apache Parquet documentation</span><span class="co">](https://parquet.apache.org/docs/)</span>, Apache Parquet is an open source, column-oriented data file format designed for efficient data storage and retrieval. It provides high performance compression and encoding schemes to handle complex data in bulk and is supported in many programming languages and analytics tools. I remember that the startup DB company I joined in 2021 had a self-developed storage engine based on Parquet, aiming to improve the performance in time-series data analysis.</span>
 <span id="cb29-115"><a href="#cb29-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-116"><a href="#cb29-116" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2.2.1 Parquet for the small dataset: kr-vs-kp</span></span>
-<span id="cb29-117"><a href="#cb29-117" aria-hidden="true" tabindex="-1"></a>Let's try parquet for the small dataset: kr-vs-kp.</span>
-<span id="cb29-118"><a href="#cb29-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-119"><a href="#cb29-119" aria-hidden="true" tabindex="-1"></a><span class="in">```{r experiment_parquet}</span></span>
-<span id="cb29-120"><a href="#cb29-120" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3oml)</span>
-<span id="cb29-121"><a href="#cb29-121" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3)</span>
-<span id="cb29-122"><a href="#cb29-122" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mlr3oml.cache =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb29-123"><a href="#cb29-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-124"><a href="#cb29-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Small dataset: kr-vs-kp</span></span>
-<span id="cb29-125"><a href="#cb29-125" aria-hidden="true" tabindex="-1"></a>oml_task <span class="ot">&lt;-</span> <span class="fu">otsk</span>(<span class="dv">145953</span>, <span class="at">parquet =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb29-126"><a href="#cb29-126" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task</span>(oml_task)</span>
-<span id="cb29-127"><a href="#cb29-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-128"><a href="#cb29-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-129"><a href="#cb29-129" aria-hidden="true" tabindex="-1"></a>An INFO log is printed:</span>
-<span id="cb29-130"><a href="#cb29-130" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
-<span id="cb29-131"><a href="#cb29-131" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:49:57.949</span><span class="pp">]</span> Retrieving parquet. {url: <span class="kw">`</span><span class="ex">https://data.openml.org/datasets/0000/0003/dataset_3.pq</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-132"><a href="#cb29-132" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-133"><a href="#cb29-133" aria-hidden="true" tabindex="-1"></a>Proving that the parquet file is downloaded.</span>
-<span id="cb29-134"><a href="#cb29-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-135"><a href="#cb29-135" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Warning ⚠️**</span>  </span>
-<span id="cb29-136"><a href="#cb29-136" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; To use </span><span class="in">`parquet = TRUE`</span><span class="at">, you must have the following packages installed: </span><span class="in">`mlr3db`</span><span class="at">, </span><span class="in">`duckdb`</span><span class="at">, and </span><span class="in">`DBI`</span><span class="at">.</span>  </span>
-<span id="cb29-137"><a href="#cb29-137" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; You can install them with:</span>  </span>
-<span id="cb29-138"><a href="#cb29-138" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; ```r</span></span>
-<span id="cb29-139"><a href="#cb29-139" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; install.packages(c("mlr3db", "duckdb", "DBI"))</span></span>
-<span id="cb29-140"><a href="#cb29-140" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; ```</span></span>
-<span id="cb29-141"><a href="#cb29-141" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; among which the compiling of </span><span class="in">`duckdb`</span><span class="at"> is time-consuming. It is a high-performance analytical database system, and it implements an open-source Parquet format. </span><span class="in">`DBI`</span><span class="at"> is a database interface for R. </span><span class="in">`mlr3db`</span><span class="at"> is a package that provides a database interface for </span><span class="in">`mlr3`</span><span class="at">. </span></span>
-<span id="cb29-142"><a href="#cb29-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-143"><a href="#cb29-143" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2.2.2 Comprehensive Test Script for ARFF vs. Parquet: Speed and Size</span></span>
-<span id="cb29-144"><a href="#cb29-144" aria-hidden="true" tabindex="-1"></a>Here I provide a <span class="co">[</span><span class="ot">R script</span><span class="co">](https://github.com/weicaocw/mlr3-pkgs/blob/main/mlr3hf/entry_tasks/easy/comprehensive_comparison_arff_parquet.r)</span> to test the speed and size of ARFF vs. Parquet for the small dataset: kr-vs-kp and a very large dataset: physionet_sepsis (1552210*44).</span>
-<span id="cb29-145"><a href="#cb29-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-146"><a href="#cb29-146" aria-hidden="true" tabindex="-1"></a>The results are as follows:</span>
-<span id="cb29-147"><a href="#cb29-147" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
-<span id="cb29-148"><a href="#cb29-148" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Task ID: 363535"</span></span>
-<span id="cb29-149"><a href="#cb29-149" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Cache directory: /root/autodl-tmp/data/mlr3oml_cache"</span></span>
-<span id="cb29-150"><a href="#cb29-150" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF: download + read ---"</span></span>
-<span id="cb29-151"><a href="#cb29-151" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF task object creation time (download path):"</span></span>
-<span id="cb29-152"><a href="#cb29-152" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-153"><a href="#cb29-153" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.119</span>   0.008   0.126</span>
-<span id="cb29-154"><a href="#cb29-154" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:59:15.889</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/task/363535</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-155"><a href="#cb29-155" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:59:34.850</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-156"><a href="#cb29-156" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:59:37.789</span><span class="pp">]</span> Retrieving ARFF {url: <span class="kw">`</span><span class="ex">https://openml.org/data/v1/download/22124380/physionet_sepsis.arff</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-157"><a href="#cb29-157" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:00:51.760</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/features/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-158"><a href="#cb29-158" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF data materialization time (download path):"</span></span>
-<span id="cb29-159"><a href="#cb29-159" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-160"><a href="#cb29-160" aria-hidden="true" tabindex="-1"></a> <span class="ex">12.998</span>   3.174  99.319</span>
-<span id="cb29-161"><a href="#cb29-161" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF cache files after download path ---"</span></span>
-<span id="cb29-162"><a href="#cb29-162" aria-hidden="true" tabindex="-1"></a>                                                                       <span class="fu">size</span></span>
-<span id="cb29-163"><a href="#cb29-163" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>         1972</span>
-<span id="cb29-164"><a href="#cb29-164" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>     1294</span>
-<span id="cb29-165"><a href="#cb29-165" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data/46817.qs2</span>          21767295</span>
-<span id="cb29-166"><a href="#cb29-166" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>         751</span>
-<span id="cb29-167"><a href="#cb29-167" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/version.json</span>                        171</span>
-<span id="cb29-168"><a href="#cb29-168" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF: read from cache ---"</span></span>
-<span id="cb29-169"><a href="#cb29-169" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF task object creation time (cache path):"</span></span>
-<span id="cb29-170"><a href="#cb29-170" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-171"><a href="#cb29-171" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.071</span>   0.003   0.075</span>
-<span id="cb29-172"><a href="#cb29-172" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF data materialization time (cache path):"</span></span>
-<span id="cb29-173"><a href="#cb29-173" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-174"><a href="#cb29-174" aria-hidden="true" tabindex="-1"></a>  <span class="ex">1.366</span>   0.641   1.391</span>
-<span id="cb29-175"><a href="#cb29-175" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF cache files after cache path ---"</span></span>
-<span id="cb29-176"><a href="#cb29-176" aria-hidden="true" tabindex="-1"></a>                                                                       <span class="fu">size</span></span>
-<span id="cb29-177"><a href="#cb29-177" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>         1972</span>
-<span id="cb29-178"><a href="#cb29-178" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>     1294</span>
-<span id="cb29-179"><a href="#cb29-179" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data/46817.qs2</span>          21767295</span>
-<span id="cb29-180"><a href="#cb29-180" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>         751</span>
-<span id="cb29-181"><a href="#cb29-181" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/version.json</span>                        171</span>
-<span id="cb29-182"><a href="#cb29-182" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet: download + read ---"</span></span>
-<span id="cb29-183"><a href="#cb29-183" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet task object creation time (download path):"</span></span>
-<span id="cb29-184"><a href="#cb29-184" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-185"><a href="#cb29-185" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.001</span>   0.000   0.001</span>
-<span id="cb29-186"><a href="#cb29-186" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:00:56.952</span><span class="pp">]</span> Cache directory <span class="st">'/root/autodl-tmp/data/mlr3oml_cache'</span> changed since initializing this object and is now <span class="st">'/root/autodl-tmp/data/mlr3oml_cache'</span>.</span>
-<span id="cb29-187"><a href="#cb29-187" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:00:56.954</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/task/363535</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-188"><a href="#cb29-188" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:01:00.887</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-189"><a href="#cb29-189" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:01:03.886</span><span class="pp">]</span> Retrieving parquet. {url: <span class="kw">`</span><span class="ex">https://data.openml.org/datasets/0004/46817/dataset_46817.pq</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-190"><a href="#cb29-190" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:01:10.427</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/features/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
-<span id="cb29-191"><a href="#cb29-191" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet data materialization time (download path):"</span></span>
-<span id="cb29-192"><a href="#cb29-192" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-193"><a href="#cb29-193" aria-hidden="true" tabindex="-1"></a>  <span class="ex">3.940</span>   0.899  19.880</span>
-<span id="cb29-194"><a href="#cb29-194" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet cache files after download path ---"</span></span>
-<span id="cb29-195"><a href="#cb29-195" aria-hidden="true" tabindex="-1"></a>                                                                          <span class="fu">size</span></span>
-<span id="cb29-196"><a href="#cb29-196" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>            1972</span>
-<span id="cb29-197"><a href="#cb29-197" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>        1294</span>
-<span id="cb29-198"><a href="#cb29-198" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_parquet/46817.parquet</span> 17000952</span>
-<span id="cb29-199"><a href="#cb29-199" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>            751</span>
-<span id="cb29-200"><a href="#cb29-200" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet: read from cache ---"</span></span>
-<span id="cb29-201"><a href="#cb29-201" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet task object creation time (cache path):"</span></span>
-<span id="cb29-202"><a href="#cb29-202" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-203"><a href="#cb29-203" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.001</span>   0.000   0.000</span>
-<span id="cb29-204"><a href="#cb29-204" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet data materialization time (cache path):"</span></span>
-<span id="cb29-205"><a href="#cb29-205" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
-<span id="cb29-206"><a href="#cb29-206" aria-hidden="true" tabindex="-1"></a>  <span class="ex">3.131</span>   0.945   2.592</span>
-<span id="cb29-207"><a href="#cb29-207" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet cache files after cache path ---"</span></span>
-<span id="cb29-208"><a href="#cb29-208" aria-hidden="true" tabindex="-1"></a>                                                                          <span class="fu">size</span></span>
-<span id="cb29-209"><a href="#cb29-209" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>            1972</span>
-<span id="cb29-210"><a href="#cb29-210" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>        1294</span>
-<span id="cb29-211"><a href="#cb29-211" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_parquet/46817.parquet</span> 17000952</span>
-<span id="cb29-212"><a href="#cb29-212" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>            751</span>
-<span id="cb29-213"><a href="#cb29-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-214"><a href="#cb29-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-215"><a href="#cb29-215" aria-hidden="true" tabindex="-1"></a>Here are some key observations:</span>
-<span id="cb29-216"><a href="#cb29-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-217"><a href="#cb29-217" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>The speed of reading the data from Parquet is much faster than from ARFF: 19.880 seconds vs. 99.319 seconds.</span>
-<span id="cb29-218"><a href="#cb29-218" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>When selecting ARFF, the actual cached format is qs2, which aims to provide reliable and fast performance for saving and loading objects in R.</span>
-<span id="cb29-219"><a href="#cb29-219" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>The size of the Parquet file is smaller than the qs2 file: 17000952 bytes vs. 21767295 bytes.</span>
-<span id="cb29-220"><a href="#cb29-220" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Loading from the cache, the time of reading the data from Parquet is not less than the time of reading the data from ARFF: 2.592 seconds vs. 1.391 seconds.</span>
-<span id="cb29-221"><a href="#cb29-221" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Loading from the cache, both ARFF and Parquet have elapsed time lower than the sum of user and system time:</span>
-<span id="cb29-222"><a href="#cb29-222" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>ARFF: 1.391 seconds vs. 1.366 seconds + 0.641 seconds = 2.007 seconds</span>
-<span id="cb29-223"><a href="#cb29-223" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Parquet: 2.592 seconds vs. 3.131 seconds + 0.945 seconds = 4.076 seconds</span>
-<span id="cb29-224"><a href="#cb29-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-225"><a href="#cb29-225" aria-hidden="true" tabindex="-1"></a>Conclusion:</span>
-<span id="cb29-226"><a href="#cb29-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-227"><a href="#cb29-227" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Parquet is possibly a better choice for large datasets, with less download time and less space consumption.</span>
-<span id="cb29-228"><a href="#cb29-228" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>ARFF data is downloaded and converted to qs2 format for caching.</span>
-<span id="cb29-229"><a href="#cb29-229" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Loading from the cache, ARFF is faster than Parquet.</span>
-<span id="cb29-230"><a href="#cb29-230" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>It is evident that loading both formats uses multiple cores.</span>
-<span id="cb29-231"><a href="#cb29-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-116"><a href="#cb29-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-117"><a href="#cb29-117" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2.2.1 Parquet for the small dataset: kr-vs-kp</span></span>
+<span id="cb29-118"><a href="#cb29-118" aria-hidden="true" tabindex="-1"></a>Let's try parquet for the small dataset: kr-vs-kp.</span>
+<span id="cb29-119"><a href="#cb29-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-120"><a href="#cb29-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r experiment_parquet}</span></span>
+<span id="cb29-121"><a href="#cb29-121" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3oml)</span>
+<span id="cb29-122"><a href="#cb29-122" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3)</span>
+<span id="cb29-123"><a href="#cb29-123" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mlr3oml.cache =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb29-124"><a href="#cb29-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-125"><a href="#cb29-125" aria-hidden="true" tabindex="-1"></a><span class="co"># Small dataset: kr-vs-kp</span></span>
+<span id="cb29-126"><a href="#cb29-126" aria-hidden="true" tabindex="-1"></a>oml_task <span class="ot">&lt;-</span> <span class="fu">otsk</span>(<span class="dv">145953</span>, <span class="at">parquet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-127"><a href="#cb29-127" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task</span>(oml_task)</span>
+<span id="cb29-128"><a href="#cb29-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-129"><a href="#cb29-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-130"><a href="#cb29-130" aria-hidden="true" tabindex="-1"></a>An INFO log is printed:</span>
+<span id="cb29-131"><a href="#cb29-131" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb29-132"><a href="#cb29-132" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:49:57.949</span><span class="pp">]</span> Retrieving parquet. {url: <span class="kw">`</span><span class="ex">https://data.openml.org/datasets/0000/0003/dataset_3.pq</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-133"><a href="#cb29-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-134"><a href="#cb29-134" aria-hidden="true" tabindex="-1"></a>Proving that the parquet file is downloaded.</span>
+<span id="cb29-135"><a href="#cb29-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-136"><a href="#cb29-136" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Warning ⚠️**</span>  </span>
+<span id="cb29-137"><a href="#cb29-137" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; To use </span><span class="in">`parquet = TRUE`</span><span class="at">, you must have the following packages installed: </span><span class="in">`mlr3db`</span><span class="at">, </span><span class="in">`duckdb`</span><span class="at">, and </span><span class="in">`DBI`</span><span class="at">.</span>  </span>
+<span id="cb29-138"><a href="#cb29-138" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; You can install them with:</span>  </span>
+<span id="cb29-139"><a href="#cb29-139" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; ```r</span></span>
+<span id="cb29-140"><a href="#cb29-140" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; install.packages(c("mlr3db", "duckdb", "DBI"))</span></span>
+<span id="cb29-141"><a href="#cb29-141" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; ```</span></span>
+<span id="cb29-142"><a href="#cb29-142" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; among which the compiling of </span><span class="in">`duckdb`</span><span class="at"> is time-consuming. It is a high-performance analytical database system, and it implements an open-source Parquet format. </span><span class="in">`DBI`</span><span class="at"> is a database interface for R. </span><span class="in">`mlr3db`</span><span class="at"> is a package that provides a database interface for </span><span class="in">`mlr3`</span><span class="at">. </span></span>
+<span id="cb29-143"><a href="#cb29-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-144"><a href="#cb29-144" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2.2.2 Comprehensive Test Script for ARFF vs. Parquet: Speed and Size</span></span>
+<span id="cb29-145"><a href="#cb29-145" aria-hidden="true" tabindex="-1"></a>Here I provide a <span class="co">[</span><span class="ot">R script</span><span class="co">](https://github.com/weicaocw/mlr3-pkgs/blob/main/mlr3hf/entry_tasks/easy/comprehensive_comparison_arff_parquet.r)</span> to test the speed and size of ARFF vs. Parquet for the small dataset: kr-vs-kp and a very large dataset: physionet_sepsis (1552210*44).</span>
+<span id="cb29-146"><a href="#cb29-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-147"><a href="#cb29-147" aria-hidden="true" tabindex="-1"></a>The results are as follows:</span>
+<span id="cb29-148"><a href="#cb29-148" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb29-149"><a href="#cb29-149" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Task ID: 363535"</span></span>
+<span id="cb29-150"><a href="#cb29-150" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Cache directory: /root/autodl-tmp/data/mlr3oml_cache"</span></span>
+<span id="cb29-151"><a href="#cb29-151" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF: download + read ---"</span></span>
+<span id="cb29-152"><a href="#cb29-152" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF task object creation time (download path):"</span></span>
+<span id="cb29-153"><a href="#cb29-153" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-154"><a href="#cb29-154" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.119</span>   0.008   0.126</span>
+<span id="cb29-155"><a href="#cb29-155" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:59:15.889</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/task/363535</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-156"><a href="#cb29-156" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:59:34.850</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-157"><a href="#cb29-157" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">00:59:37.789</span><span class="pp">]</span> Retrieving ARFF {url: <span class="kw">`</span><span class="ex">https://openml.org/data/v1/download/22124380/physionet_sepsis.arff</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-158"><a href="#cb29-158" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:00:51.760</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/features/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-159"><a href="#cb29-159" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF data materialization time (download path):"</span></span>
+<span id="cb29-160"><a href="#cb29-160" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-161"><a href="#cb29-161" aria-hidden="true" tabindex="-1"></a> <span class="ex">12.998</span>   3.174  99.319</span>
+<span id="cb29-162"><a href="#cb29-162" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF cache files after download path ---"</span></span>
+<span id="cb29-163"><a href="#cb29-163" aria-hidden="true" tabindex="-1"></a>                                                                       <span class="fu">size</span></span>
+<span id="cb29-164"><a href="#cb29-164" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>         1972</span>
+<span id="cb29-165"><a href="#cb29-165" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>     1294</span>
+<span id="cb29-166"><a href="#cb29-166" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data/46817.qs2</span>          21767295</span>
+<span id="cb29-167"><a href="#cb29-167" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>         751</span>
+<span id="cb29-168"><a href="#cb29-168" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/version.json</span>                        171</span>
+<span id="cb29-169"><a href="#cb29-169" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF: read from cache ---"</span></span>
+<span id="cb29-170"><a href="#cb29-170" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF task object creation time (cache path):"</span></span>
+<span id="cb29-171"><a href="#cb29-171" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-172"><a href="#cb29-172" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.071</span>   0.003   0.075</span>
+<span id="cb29-173"><a href="#cb29-173" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"ARFF data materialization time (cache path):"</span></span>
+<span id="cb29-174"><a href="#cb29-174" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-175"><a href="#cb29-175" aria-hidden="true" tabindex="-1"></a>  <span class="ex">1.366</span>   0.641   1.391</span>
+<span id="cb29-176"><a href="#cb29-176" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- ARFF cache files after cache path ---"</span></span>
+<span id="cb29-177"><a href="#cb29-177" aria-hidden="true" tabindex="-1"></a>                                                                       <span class="fu">size</span></span>
+<span id="cb29-178"><a href="#cb29-178" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>         1972</span>
+<span id="cb29-179"><a href="#cb29-179" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>     1294</span>
+<span id="cb29-180"><a href="#cb29-180" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data/46817.qs2</span>          21767295</span>
+<span id="cb29-181"><a href="#cb29-181" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>         751</span>
+<span id="cb29-182"><a href="#cb29-182" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/version.json</span>                        171</span>
+<span id="cb29-183"><a href="#cb29-183" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet: download + read ---"</span></span>
+<span id="cb29-184"><a href="#cb29-184" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet task object creation time (download path):"</span></span>
+<span id="cb29-185"><a href="#cb29-185" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-186"><a href="#cb29-186" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.001</span>   0.000   0.001</span>
+<span id="cb29-187"><a href="#cb29-187" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:00:56.952</span><span class="pp">]</span> Cache directory <span class="st">'/root/autodl-tmp/data/mlr3oml_cache'</span> changed since initializing this object and is now <span class="st">'/root/autodl-tmp/data/mlr3oml_cache'</span>.</span>
+<span id="cb29-188"><a href="#cb29-188" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:00:56.954</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/task/363535</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-189"><a href="#cb29-189" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:01:00.887</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-190"><a href="#cb29-190" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:01:03.886</span><span class="pp">]</span> Retrieving parquet. {url: <span class="kw">`</span><span class="ex">https://data.openml.org/datasets/0004/46817/dataset_46817.pq</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-191"><a href="#cb29-191" aria-hidden="true" tabindex="-1"></a><span class="ex">INFO</span>  <span class="pp">[</span><span class="ss">01:01:10.427</span><span class="pp">]</span> Retrieving JSON {url: <span class="kw">`</span><span class="ex">https://www.openml.org/api/v1/json/data/features/46817</span><span class="kw">`</span>, authenticated: <span class="kw">`</span><span class="ex">FALSE</span><span class="kw">`</span>}</span>
+<span id="cb29-192"><a href="#cb29-192" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet data materialization time (download path):"</span></span>
+<span id="cb29-193"><a href="#cb29-193" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-194"><a href="#cb29-194" aria-hidden="true" tabindex="-1"></a>  <span class="ex">3.940</span>   0.899  19.880</span>
+<span id="cb29-195"><a href="#cb29-195" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet cache files after download path ---"</span></span>
+<span id="cb29-196"><a href="#cb29-196" aria-hidden="true" tabindex="-1"></a>                                                                          <span class="fu">size</span></span>
+<span id="cb29-197"><a href="#cb29-197" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>            1972</span>
+<span id="cb29-198"><a href="#cb29-198" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>        1294</span>
+<span id="cb29-199"><a href="#cb29-199" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_parquet/46817.parquet</span> 17000952</span>
+<span id="cb29-200"><a href="#cb29-200" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>            751</span>
+<span id="cb29-201"><a href="#cb29-201" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet: read from cache ---"</span></span>
+<span id="cb29-202"><a href="#cb29-202" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet task object creation time (cache path):"</span></span>
+<span id="cb29-203"><a href="#cb29-203" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-204"><a href="#cb29-204" aria-hidden="true" tabindex="-1"></a>  <span class="ex">0.001</span>   0.000   0.000</span>
+<span id="cb29-205"><a href="#cb29-205" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"Parquet data materialization time (cache path):"</span></span>
+<span id="cb29-206"><a href="#cb29-206" aria-hidden="true" tabindex="-1"></a>   <span class="ex">user</span>  system elapsed</span>
+<span id="cb29-207"><a href="#cb29-207" aria-hidden="true" tabindex="-1"></a>  <span class="ex">3.131</span>   0.945   2.592</span>
+<span id="cb29-208"><a href="#cb29-208" aria-hidden="true" tabindex="-1"></a><span class="ex">[1]</span> <span class="st">"--- Parquet cache files after cache path ---"</span></span>
+<span id="cb29-209"><a href="#cb29-209" aria-hidden="true" tabindex="-1"></a>                                                                          <span class="fu">size</span></span>
+<span id="cb29-210"><a href="#cb29-210" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_desc/46817.qs2</span>            1972</span>
+<span id="cb29-211"><a href="#cb29-211" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_features/46817.qs2</span>        1294</span>
+<span id="cb29-212"><a href="#cb29-212" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/data_parquet/46817.parquet</span> 17000952</span>
+<span id="cb29-213"><a href="#cb29-213" aria-hidden="true" tabindex="-1"></a><span class="ex">/root/autodl-tmp/data/mlr3oml_cache/public/task_desc/363535.qs2</span>            751</span>
+<span id="cb29-214"><a href="#cb29-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-215"><a href="#cb29-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-216"><a href="#cb29-216" aria-hidden="true" tabindex="-1"></a>Here are some key observations:</span>
+<span id="cb29-217"><a href="#cb29-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-218"><a href="#cb29-218" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>The speed of reading the data from Parquet is much faster than from ARFF: 19.880 seconds vs. 99.319 seconds.</span>
+<span id="cb29-219"><a href="#cb29-219" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>When selecting ARFF, the actual cached format is qs2, which aims to provide reliable and fast performance for saving and loading objects in R.</span>
+<span id="cb29-220"><a href="#cb29-220" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>The size of the Parquet file is smaller than the qs2 file: 17000952 bytes vs. 21767295 bytes.</span>
+<span id="cb29-221"><a href="#cb29-221" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Loading from the cache, the time of reading the data from Parquet is not less than the time of reading the data from ARFF: 2.592 seconds vs. 1.391 seconds.</span>
+<span id="cb29-222"><a href="#cb29-222" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Loading from the cache, both ARFF and Parquet have elapsed time lower than the sum of user and system time:</span>
+<span id="cb29-223"><a href="#cb29-223" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>ARFF: 1.391 seconds vs. 1.366 seconds + 0.641 seconds = 2.007 seconds</span>
+<span id="cb29-224"><a href="#cb29-224" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Parquet: 2.592 seconds vs. 3.131 seconds + 0.945 seconds = 4.076 seconds</span>
+<span id="cb29-225"><a href="#cb29-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-226"><a href="#cb29-226" aria-hidden="true" tabindex="-1"></a>Conclusion:</span>
+<span id="cb29-227"><a href="#cb29-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-228"><a href="#cb29-228" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Parquet is possibly a better choice for large datasets, with less download time and less space consumption.</span>
+<span id="cb29-229"><a href="#cb29-229" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>ARFF data is downloaded and converted to qs2 format for caching.</span>
+<span id="cb29-230"><a href="#cb29-230" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Loading from the cache, ARFF is faster than Parquet.</span>
+<span id="cb29-231"><a href="#cb29-231" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>It is evident that loading both formats uses multiple cores.</span>
 <span id="cb29-232"><a href="#cb29-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-233"><a href="#cb29-233" aria-hidden="true" tabindex="-1"></a>One final remark:</span>
-<span id="cb29-234"><a href="#cb29-234" aria-hidden="true" tabindex="-1"></a>I really wanted to explore is there any performance difference while analyzing a large dataset with ARFF and Parquet, especially when the queries are parquet-friendly. Or is it not format-dependent once the data is loaded? But it is beyond the scope of this report.</span>
-<span id="cb29-235"><a href="#cb29-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-236"><a href="#cb29-236" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Source Code Analysis</span></span>
-<span id="cb29-237"><a href="#cb29-237" aria-hidden="true" tabindex="-1"></a>I inspected the <span class="co">[</span><span class="ot">`OMLData.R` source code</span><span class="co">](https://github.com/mlr-org/mlr3oml/blob/main/R/OMLData.R)</span> from the <span class="in">`mlr3oml`</span> GitHub repository to understand the data fetching process.</span>
-<span id="cb29-238"><a href="#cb29-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-239"><a href="#cb29-239" aria-hidden="true" tabindex="-1"></a>Why this file? Because <span class="in">`oml_task$data`</span> is an <span class="in">`OMLData`</span> object, and as stated previously in section 1.3, only JSON metadata is downloaded, the ARFF data file is not downloaded until <span class="in">`as_task`</span> is called. </span>
-<span id="cb29-240"><a href="#cb29-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-241"><a href="#cb29-241" aria-hidden="true" tabindex="-1"></a>There is no secret in the source code.</span>
-<span id="cb29-242"><a href="#cb29-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-243"><a href="#cb29-243" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**.get_backend()**: The actual data downloading occurs only when <span class="in">`private.get_backend()`</span> is called (Line 201-230).</span>
-<span id="cb29-244"><a href="#cb29-244" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-245"><a href="#cb29-245" aria-hidden="true" tabindex="-1"></a>.get_backend <span class="ot">=</span> <span class="cf">function</span>(<span class="at">primary_key =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb29-246"><a href="#cb29-246" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(private<span class="sc">$</span>.backend)) {</span>
-<span id="cb29-247"><a href="#cb29-247" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(private<span class="sc">$</span>.backend)</span>
-<span id="cb29-248"><a href="#cb29-248" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb29-249"><a href="#cb29-249" aria-hidden="true" tabindex="-1"></a>  backend <span class="ot">=</span> <span class="cn">NULL</span></span>
-<span id="cb29-250"><a href="#cb29-250" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (self<span class="sc">$</span>parquet) {</span>
-<span id="cb29-251"><a href="#cb29-251" aria-hidden="true" tabindex="-1"></a>    <span class="fu">require_namespaces</span>(<span class="fu">c</span>(<span class="st">"mlr3db"</span>, <span class="st">"duckdb"</span>, <span class="st">"DBI"</span>))</span>
-<span id="cb29-252"><a href="#cb29-252" aria-hidden="true" tabindex="-1"></a>    path <span class="ot">=</span> <span class="fu">try</span>({self<span class="sc">$</span>parquet_path}, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb29-253"><a href="#cb29-253" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">inherits</span>(path, <span class="st">"try-error"</span>)) {</span>
-<span id="cb29-254"><a href="#cb29-254" aria-hidden="true" tabindex="-1"></a>      lg<span class="sc">$</span><span class="fu">info</span>(<span class="st">"Failed to download parquet, trying arff."</span>, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
-<span id="cb29-255"><a href="#cb29-255" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb29-256"><a href="#cb29-256" aria-hidden="true" tabindex="-1"></a>      factors <span class="ot">=</span> self<span class="sc">$</span>features[<span class="fu">get</span>(<span class="st">"data_type"</span>) <span class="sc">==</span> <span class="st">"nominal"</span>, <span class="st">"name"</span>][[<span class="dv">1</span>L]]</span>
-<span id="cb29-257"><a href="#cb29-257" aria-hidden="true" tabindex="-1"></a>      backend <span class="ot">=</span> <span class="fu">try</span>(<span class="fu">as_duckdb_backend_character</span>(path, <span class="at">primary_key =</span> primary_key, <span class="at">factors =</span> factors), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb29-258"><a href="#cb29-258" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">inherits</span>(backend, <span class="st">"try-error"</span>)) {</span>
-<span id="cb29-259"><a href="#cb29-259" aria-hidden="true" tabindex="-1"></a>        msg <span class="ot">=</span> <span class="fu">sprintf</span>(</span>
-<span id="cb29-260"><a href="#cb29-260" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Parquet available but failed to create backend, reverting to arff. Error message is '%s'"</span>, <span class="co"># nolint</span></span>
-<span id="cb29-261"><a href="#cb29-261" aria-hidden="true" tabindex="-1"></a>          backend</span>
-<span id="cb29-262"><a href="#cb29-262" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb29-263"><a href="#cb29-263" aria-hidden="true" tabindex="-1"></a>        lg<span class="sc">$</span><span class="fu">info</span>(msg, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
-<span id="cb29-264"><a href="#cb29-264" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb29-265"><a href="#cb29-265" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb29-266"><a href="#cb29-266" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb29-267"><a href="#cb29-267" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(backend) <span class="sc">||</span> <span class="fu">inherits</span>(path, <span class="st">"try-error"</span>) <span class="sc">||</span> <span class="fu">inherits</span>(backend, <span class="st">"try-error"</span>)) {</span>
-<span id="cb29-268"><a href="#cb29-268" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">=</span> <span class="fu">cached</span>(download_arff, <span class="st">"data"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
-<span id="cb29-269"><a href="#cb29-269" aria-hidden="true" tabindex="-1"></a>      <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server</span>
-<span id="cb29-270"><a href="#cb29-270" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb29-271"><a href="#cb29-271" aria-hidden="true" tabindex="-1"></a>    backend <span class="ot">=</span> <span class="fu">as_data_backend</span>(data, <span class="at">primary_key =</span> primary_key)</span>
-<span id="cb29-272"><a href="#cb29-272" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb29-273"><a href="#cb29-273" aria-hidden="true" tabindex="-1"></a>  private<span class="sc">$</span>.backend <span class="ot">=</span> backend</span>
-<span id="cb29-274"><a href="#cb29-274" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-275"><a href="#cb29-275" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-276"><a href="#cb29-276" aria-hidden="true" tabindex="-1"></a>For ARFF, it is:</span>
-<span id="cb29-277"><a href="#cb29-277" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-278"><a href="#cb29-278" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> <span class="fu">cached</span>(download_arff, <span class="st">"data"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
-<span id="cb29-279"><a href="#cb29-279" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server</span>
-<span id="cb29-280"><a href="#cb29-280" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-281"><a href="#cb29-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-282"><a href="#cb29-282" aria-hidden="true" tabindex="-1"></a>where <span class="in">`download_arff`</span> is a function that downloads the ARFF data file, depending on whether using a cache.</span>
-<span id="cb29-283"><a href="#cb29-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-284"><a href="#cb29-284" aria-hidden="true" tabindex="-1"></a>For Parquet, it is:</span>
-<span id="cb29-285"><a href="#cb29-285" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-286"><a href="#cb29-286" aria-hidden="true" tabindex="-1"></a>path <span class="ot">=</span> <span class="fu">try</span>({self<span class="sc">$</span>parquet_path}, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb29-287"><a href="#cb29-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-288"><a href="#cb29-288" aria-hidden="true" tabindex="-1"></a>where as <span class="in">`self$parquet_path`</span> is defined in the active binding <span class="in">`parquet_path`</span> (Line 180-193):</span>
-<span id="cb29-289"><a href="#cb29-289" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-290"><a href="#cb29-290" aria-hidden="true" tabindex="-1"></a>parquet_path <span class="ot">=</span> <span class="cf">function</span>() {</span>
-<span id="cb29-291"><a href="#cb29-291" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">isFALSE</span>(self<span class="sc">$</span>parquet)) {</span>
-<span id="cb29-292"><a href="#cb29-292" aria-hidden="true" tabindex="-1"></a>    <span class="fu">messagef</span>(<span class="st">"Parquet is not the selected data format, returning NULL."</span>)</span>
-<span id="cb29-293"><a href="#cb29-293" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb29-294"><a href="#cb29-294" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb29-295"><a href="#cb29-295" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(private<span class="sc">$</span>.parquet_path)) {</span>
-<span id="cb29-296"><a href="#cb29-296" aria-hidden="true" tabindex="-1"></a>    <span class="fu">loadNamespace</span>(<span class="st">"mlr3db"</span>)</span>
-<span id="cb29-297"><a href="#cb29-297" aria-hidden="true" tabindex="-1"></a>    private<span class="sc">$</span>.parquet_path <span class="ot">=</span> <span class="fu">cached</span>(</span>
-<span id="cb29-298"><a href="#cb29-298" aria-hidden="true" tabindex="-1"></a>      download_parquet, <span class="st">"data_parquet"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
-<span id="cb29-299"><a href="#cb29-299" aria-hidden="true" tabindex="-1"></a>      <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server, <span class="at">parquet =</span> <span class="cn">TRUE</span></span>
-<span id="cb29-300"><a href="#cb29-300" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb29-301"><a href="#cb29-301" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb29-302"><a href="#cb29-302" aria-hidden="true" tabindex="-1"></a>  private<span class="sc">$</span>.parquet_path</span>
-<span id="cb29-303"><a href="#cb29-303" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-304"><a href="#cb29-304" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>   </span>
-<span id="cb29-305"><a href="#cb29-305" aria-hidden="true" tabindex="-1"></a>We saw the exactly same logic as the ARFF case:</span>
-<span id="cb29-306"><a href="#cb29-306" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-307"><a href="#cb29-307" aria-hidden="true" tabindex="-1"></a>private<span class="sc">$</span>.parquet_path <span class="ot">=</span> <span class="fu">cached</span>(</span>
-<span id="cb29-308"><a href="#cb29-308" aria-hidden="true" tabindex="-1"></a>  download_parquet, <span class="st">"data_parquet"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
-<span id="cb29-309"><a href="#cb29-309" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server, <span class="at">parquet =</span> <span class="cn">TRUE</span></span>
-<span id="cb29-310"><a href="#cb29-310" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-311"><a href="#cb29-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-312"><a href="#cb29-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-313"><a href="#cb29-313" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Triggering the Download**: The download is triggered through <span class="in">`.get_backend()`</span> when we explicitly call <span class="in">`oml_task$data$data`</span> (Line 118-128) or convert it using <span class="in">`as_task()`</span> via <span class="in">`as_data_backend`</span>(Line 259, Line 235-237):</span>
-<span id="cb29-314"><a href="#cb29-314" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-315"><a href="#cb29-315" aria-hidden="true" tabindex="-1"></a><span class="co"># Line 118-128, called when we explicitly call `oml_task$data$data`</span></span>
-<span id="cb29-316"><a href="#cb29-316" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> <span class="cf">function</span>() {</span>
-<span id="cb29-317"><a href="#cb29-317" aria-hidden="true" tabindex="-1"></a>  backend <span class="ot">=</span> private<span class="sc">$</span><span class="fu">.get_backend</span>()</span>
-<span id="cb29-318"><a href="#cb29-318" aria-hidden="true" tabindex="-1"></a>  ii <span class="ot">=</span> <span class="sc">!</span>self<span class="sc">$</span>features<span class="sc">$</span>is_ignore <span class="sc">&amp;</span> <span class="sc">!</span>self<span class="sc">$</span>features<span class="sc">$</span>is_row_identifier</span>
-<span id="cb29-319"><a href="#cb29-319" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">=</span> self<span class="sc">$</span>features<span class="sc">$</span>name[ii]</span>
-<span id="cb29-320"><a href="#cb29-320" aria-hidden="true" tabindex="-1"></a>  existing <span class="ot">=</span> <span class="fu">setdiff</span>(backend<span class="sc">$</span>colnames, backend<span class="sc">$</span>primary_key)</span>
-<span id="cb29-321"><a href="#cb29-321" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">test_subset</span>(cols, existing)) {</span>
-<span id="cb29-322"><a href="#cb29-322" aria-hidden="true" tabindex="-1"></a>    missing <span class="ot">=</span> <span class="fu">setdiff</span>(cols, existing)</span>
-<span id="cb29-323"><a href="#cb29-323" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warningf</span>(<span class="st">"Data is missing features from feature description {%s}.</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">paste0</span>(missing, <span class="at">collapse =</span> <span class="st">", "</span>))</span>
-<span id="cb29-324"><a href="#cb29-324" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb29-325"><a href="#cb29-325" aria-hidden="true" tabindex="-1"></a>  backend<span class="sc">$</span><span class="fu">data</span>(backend<span class="sc">$</span>rownames, cols)</span>
-<span id="cb29-326"><a href="#cb29-326" aria-hidden="true" tabindex="-1"></a>},</span>
-<span id="cb29-327"><a href="#cb29-327" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-328"><a href="#cb29-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-329"><a href="#cb29-329" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-330"><a href="#cb29-330" aria-hidden="true" tabindex="-1"></a><span class="co"># Line 259, called when we convert it using `as_task()`</span></span>
-<span id="cb29-331"><a href="#cb29-331" aria-hidden="true" tabindex="-1"></a>task <span class="ot">=</span> constructor<span class="sc">$</span><span class="fu">new</span>(x<span class="sc">$</span>name, <span class="fu">as_data_backend</span>(x), <span class="at">target =</span> target)</span>
-<span id="cb29-332"><a href="#cb29-332" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-333"><a href="#cb29-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-334"><a href="#cb29-334" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb29-335"><a href="#cb29-335" aria-hidden="true" tabindex="-1"></a><span class="co"># Line 235-237</span></span>
-<span id="cb29-336"><a href="#cb29-336" aria-hidden="true" tabindex="-1"></a>as_data_backend.OMLData <span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">primary_key =</span> <span class="cn">NULL</span>, ...) {</span>
-<span id="cb29-337"><a href="#cb29-337" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_private</span>(data)<span class="sc">$</span><span class="fu">.get_backend</span>(primary_key)</span>
-<span id="cb29-338"><a href="#cb29-338" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-339"><a href="#cb29-339" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-340"><a href="#cb29-340" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-341"><a href="#cb29-341" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**The Parquet Fallback Mechanism**:</span>
-<span id="cb29-342"><a href="#cb29-342" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**Hard Error**: If <span class="in">`parquet = TRUE`</span> but <span class="in">`duckdb`</span> or other dependencies is missing, the code halts at <span class="in">`require_namespaces()`</span>.</span>
-<span id="cb29-343"><a href="#cb29-343" aria-hidden="true" tabindex="-1"></a>   <span class="in">```r</span></span>
-<span id="cb29-344"><a href="#cb29-344" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Line 207</span></span>
-<span id="cb29-345"><a href="#cb29-345" aria-hidden="true" tabindex="-1"></a>   <span class="fu">require_namespaces</span>(<span class="fu">c</span>(<span class="st">"mlr3db"</span>, <span class="st">"duckdb"</span>, <span class="st">"DBI"</span>))</span>
-<span id="cb29-346"><a href="#cb29-346" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb29-347"><a href="#cb29-347" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**Silent Fallback**: If the Parquet file does not exist on the OpenML server, the <span class="in">`try()`</span> block catches the error, and the system seamlessly falls back to downloading the ARFF version.</span>
-<span id="cb29-348"><a href="#cb29-348" aria-hidden="true" tabindex="-1"></a>   <span class="in">```r</span></span>
-<span id="cb29-349"><a href="#cb29-349" aria-hidden="true" tabindex="-1"></a>   path <span class="ot">=</span> <span class="fu">try</span>({self<span class="sc">$</span>parquet_path}, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb29-350"><a href="#cb29-350" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (<span class="fu">inherits</span>(path, <span class="st">"try-error"</span>)) {</span>
-<span id="cb29-351"><a href="#cb29-351" aria-hidden="true" tabindex="-1"></a>     lg<span class="sc">$</span><span class="fu">info</span>(<span class="st">"Failed to download parquet, trying arff."</span>, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
-<span id="cb29-352"><a href="#cb29-352" aria-hidden="true" tabindex="-1"></a>   }</span>
-<span id="cb29-353"><a href="#cb29-353" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb29-354"><a href="#cb29-354" aria-hidden="true" tabindex="-1"></a>   If failed to creat a Parquet backend, the system seamlessly falls back to downloading the ARFF version as well:</span>
-<span id="cb29-355"><a href="#cb29-355" aria-hidden="true" tabindex="-1"></a>   <span class="in">```r</span></span>
-<span id="cb29-356"><a href="#cb29-356" aria-hidden="true" tabindex="-1"></a>   backend <span class="ot">=</span> <span class="fu">try</span>(<span class="fu">as_duckdb_backend_character</span>(path, <span class="at">primary_key =</span> primary_key, <span class="at">factors =</span> factors), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb29-357"><a href="#cb29-357" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (<span class="fu">inherits</span>(backend, <span class="st">"try-error"</span>)) {</span>
-<span id="cb29-358"><a href="#cb29-358" aria-hidden="true" tabindex="-1"></a>    msg <span class="ot">=</span> <span class="fu">sprintf</span>(</span>
-<span id="cb29-359"><a href="#cb29-359" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Parquet available but failed to create backend, reverting to arff. Error message is '%s'"</span>, <span class="co"># nolint</span></span>
-<span id="cb29-360"><a href="#cb29-360" aria-hidden="true" tabindex="-1"></a>      backend</span>
-<span id="cb29-361"><a href="#cb29-361" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb29-362"><a href="#cb29-362" aria-hidden="true" tabindex="-1"></a>     lg<span class="sc">$</span><span class="fu">info</span>(msg, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
-<span id="cb29-363"><a href="#cb29-363" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb29-364"><a href="#cb29-364" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb29-365"><a href="#cb29-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-366"><a href="#cb29-366" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Conclusion</span></span>
-<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a>This report explored the <span class="in">`ostk`</span> in <span class="in">`mlr3oml`</span> package, analyzing its data retrieval mechanisms, format preferences (ARFF vs. Parquet).</span>
-<span id="cb29-368"><a href="#cb29-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-369"><a href="#cb29-369" aria-hidden="true" tabindex="-1"></a>I inspected the <span class="co">[</span><span class="ot">`OMLData.R` source code</span><span class="co">](https://github.com/mlr-org/mlr3oml/blob/main/R/OMLData.R)</span> from the <span class="in">`mlr3oml`</span> GitHub repository to understand the data fetching process.</span>
-<span id="cb29-370"><a href="#cb29-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-371"><a href="#cb29-371" aria-hidden="true" tabindex="-1"></a>I provided a <span class="co">[</span><span class="ot">R script</span><span class="co">](https://github.com/weicaocw/mlr3-pkgs/blob/main/mlr3hf/entry_tasks/easy/comprehensive_comparison_arff_parquet.r)</span> to test the speed and size of ARFF vs. Parquet for the small dataset: kr-vs-kp and a very large dataset: physionet_sepsis (1552210*44).</span>
-<span id="cb29-372"><a href="#cb29-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-373"><a href="#cb29-373" aria-hidden="true" tabindex="-1"></a>The results showed that Parquet is a possibly better choice for large datasets with less download time and less space consumption. ARFF are downloaded and converted to qs2 format to cache instantly. Loading from the cache, ARFF is faster than Parquet. It is evident that the loading of both formats use multiple cores.</span>
-<span id="cb29-374"><a href="#cb29-374" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a>One final remark: I really wanted to explore is there any performance difference while analyzing a large dataset with ARFF and Parquet, especially when the queries are parquet-friendly. Or is it not format-dependent once the data is loaded? But it is beyond the scope of this report.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb29-233"><a href="#cb29-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-234"><a href="#cb29-234" aria-hidden="true" tabindex="-1"></a>One final remark:</span>
+<span id="cb29-235"><a href="#cb29-235" aria-hidden="true" tabindex="-1"></a>I really wanted to explore is there any performance difference while analyzing a large dataset with ARFF and Parquet, especially when the queries are parquet-friendly. Or is it not format-dependent once the data is loaded? But it is beyond the scope of this report.</span>
+<span id="cb29-236"><a href="#cb29-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-237"><a href="#cb29-237" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Source Code Analysis</span></span>
+<span id="cb29-238"><a href="#cb29-238" aria-hidden="true" tabindex="-1"></a>I inspected the <span class="co">[</span><span class="ot">`OMLData.R` source code</span><span class="co">](https://github.com/mlr-org/mlr3oml/blob/main/R/OMLData.R)</span> from the <span class="in">`mlr3oml`</span> GitHub repository to understand the data fetching process.</span>
+<span id="cb29-239"><a href="#cb29-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-240"><a href="#cb29-240" aria-hidden="true" tabindex="-1"></a>Why this file? Because <span class="in">`oml_task$data`</span> is an <span class="in">`OMLData`</span> object, and as stated previously in section 1.3, only JSON metadata is downloaded, the ARFF data file is not downloaded until <span class="in">`as_task`</span> is called. </span>
+<span id="cb29-241"><a href="#cb29-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-242"><a href="#cb29-242" aria-hidden="true" tabindex="-1"></a>There is no secret in the source code.</span>
+<span id="cb29-243"><a href="#cb29-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-244"><a href="#cb29-244" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**.get_backend()**: The actual data downloading occurs only when <span class="in">`private.get_backend()`</span> is called (Line 201-230).</span>
+<span id="cb29-245"><a href="#cb29-245" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-246"><a href="#cb29-246" aria-hidden="true" tabindex="-1"></a>.get_backend <span class="ot">=</span> <span class="cf">function</span>(<span class="at">primary_key =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb29-247"><a href="#cb29-247" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(private<span class="sc">$</span>.backend)) {</span>
+<span id="cb29-248"><a href="#cb29-248" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(private<span class="sc">$</span>.backend)</span>
+<span id="cb29-249"><a href="#cb29-249" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-250"><a href="#cb29-250" aria-hidden="true" tabindex="-1"></a>  backend <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb29-251"><a href="#cb29-251" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (self<span class="sc">$</span>parquet) {</span>
+<span id="cb29-252"><a href="#cb29-252" aria-hidden="true" tabindex="-1"></a>    <span class="fu">require_namespaces</span>(<span class="fu">c</span>(<span class="st">"mlr3db"</span>, <span class="st">"duckdb"</span>, <span class="st">"DBI"</span>))</span>
+<span id="cb29-253"><a href="#cb29-253" aria-hidden="true" tabindex="-1"></a>    path <span class="ot">=</span> <span class="fu">try</span>({self<span class="sc">$</span>parquet_path}, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-254"><a href="#cb29-254" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">inherits</span>(path, <span class="st">"try-error"</span>)) {</span>
+<span id="cb29-255"><a href="#cb29-255" aria-hidden="true" tabindex="-1"></a>      lg<span class="sc">$</span><span class="fu">info</span>(<span class="st">"Failed to download parquet, trying arff."</span>, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
+<span id="cb29-256"><a href="#cb29-256" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb29-257"><a href="#cb29-257" aria-hidden="true" tabindex="-1"></a>      factors <span class="ot">=</span> self<span class="sc">$</span>features[<span class="fu">get</span>(<span class="st">"data_type"</span>) <span class="sc">==</span> <span class="st">"nominal"</span>, <span class="st">"name"</span>][[<span class="dv">1</span>L]]</span>
+<span id="cb29-258"><a href="#cb29-258" aria-hidden="true" tabindex="-1"></a>      backend <span class="ot">=</span> <span class="fu">try</span>(<span class="fu">as_duckdb_backend_character</span>(path, <span class="at">primary_key =</span> primary_key, <span class="at">factors =</span> factors), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-259"><a href="#cb29-259" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">inherits</span>(backend, <span class="st">"try-error"</span>)) {</span>
+<span id="cb29-260"><a href="#cb29-260" aria-hidden="true" tabindex="-1"></a>        msg <span class="ot">=</span> <span class="fu">sprintf</span>(</span>
+<span id="cb29-261"><a href="#cb29-261" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Parquet available but failed to create backend, reverting to arff. Error message is '%s'"</span>, <span class="co"># nolint</span></span>
+<span id="cb29-262"><a href="#cb29-262" aria-hidden="true" tabindex="-1"></a>          backend</span>
+<span id="cb29-263"><a href="#cb29-263" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb29-264"><a href="#cb29-264" aria-hidden="true" tabindex="-1"></a>        lg<span class="sc">$</span><span class="fu">info</span>(msg, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
+<span id="cb29-265"><a href="#cb29-265" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb29-266"><a href="#cb29-266" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-267"><a href="#cb29-267" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-268"><a href="#cb29-268" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(backend) <span class="sc">||</span> <span class="fu">inherits</span>(path, <span class="st">"try-error"</span>) <span class="sc">||</span> <span class="fu">inherits</span>(backend, <span class="st">"try-error"</span>)) {</span>
+<span id="cb29-269"><a href="#cb29-269" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">=</span> <span class="fu">cached</span>(download_arff, <span class="st">"data"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
+<span id="cb29-270"><a href="#cb29-270" aria-hidden="true" tabindex="-1"></a>      <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server</span>
+<span id="cb29-271"><a href="#cb29-271" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb29-272"><a href="#cb29-272" aria-hidden="true" tabindex="-1"></a>    backend <span class="ot">=</span> <span class="fu">as_data_backend</span>(data, <span class="at">primary_key =</span> primary_key)</span>
+<span id="cb29-273"><a href="#cb29-273" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-274"><a href="#cb29-274" aria-hidden="true" tabindex="-1"></a>  private<span class="sc">$</span>.backend <span class="ot">=</span> backend</span>
+<span id="cb29-275"><a href="#cb29-275" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-276"><a href="#cb29-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-277"><a href="#cb29-277" aria-hidden="true" tabindex="-1"></a>For ARFF, it is:</span>
+<span id="cb29-278"><a href="#cb29-278" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-279"><a href="#cb29-279" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> <span class="fu">cached</span>(download_arff, <span class="st">"data"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
+<span id="cb29-280"><a href="#cb29-280" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server</span>
+<span id="cb29-281"><a href="#cb29-281" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-282"><a href="#cb29-282" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-283"><a href="#cb29-283" aria-hidden="true" tabindex="-1"></a>where <span class="in">`download_arff`</span> is a function that downloads the ARFF data file, depending on whether using a cache.</span>
+<span id="cb29-284"><a href="#cb29-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-285"><a href="#cb29-285" aria-hidden="true" tabindex="-1"></a>For Parquet, it is:</span>
+<span id="cb29-286"><a href="#cb29-286" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-287"><a href="#cb29-287" aria-hidden="true" tabindex="-1"></a>path <span class="ot">=</span> <span class="fu">try</span>({self<span class="sc">$</span>parquet_path}, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-288"><a href="#cb29-288" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-289"><a href="#cb29-289" aria-hidden="true" tabindex="-1"></a>where as <span class="in">`self$parquet_path`</span> is defined in the active binding <span class="in">`parquet_path`</span> (Line 180-193):</span>
+<span id="cb29-290"><a href="#cb29-290" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-291"><a href="#cb29-291" aria-hidden="true" tabindex="-1"></a>parquet_path <span class="ot">=</span> <span class="cf">function</span>() {</span>
+<span id="cb29-292"><a href="#cb29-292" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">isFALSE</span>(self<span class="sc">$</span>parquet)) {</span>
+<span id="cb29-293"><a href="#cb29-293" aria-hidden="true" tabindex="-1"></a>    <span class="fu">messagef</span>(<span class="st">"Parquet is not the selected data format, returning NULL."</span>)</span>
+<span id="cb29-294"><a href="#cb29-294" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb29-295"><a href="#cb29-295" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-296"><a href="#cb29-296" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(private<span class="sc">$</span>.parquet_path)) {</span>
+<span id="cb29-297"><a href="#cb29-297" aria-hidden="true" tabindex="-1"></a>    <span class="fu">loadNamespace</span>(<span class="st">"mlr3db"</span>)</span>
+<span id="cb29-298"><a href="#cb29-298" aria-hidden="true" tabindex="-1"></a>    private<span class="sc">$</span>.parquet_path <span class="ot">=</span> <span class="fu">cached</span>(</span>
+<span id="cb29-299"><a href="#cb29-299" aria-hidden="true" tabindex="-1"></a>      download_parquet, <span class="st">"data_parquet"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
+<span id="cb29-300"><a href="#cb29-300" aria-hidden="true" tabindex="-1"></a>      <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server, <span class="at">parquet =</span> <span class="cn">TRUE</span></span>
+<span id="cb29-301"><a href="#cb29-301" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb29-302"><a href="#cb29-302" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-303"><a href="#cb29-303" aria-hidden="true" tabindex="-1"></a>  private<span class="sc">$</span>.parquet_path</span>
+<span id="cb29-304"><a href="#cb29-304" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-305"><a href="#cb29-305" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>   </span>
+<span id="cb29-306"><a href="#cb29-306" aria-hidden="true" tabindex="-1"></a>We saw the exactly same logic as the ARFF case:</span>
+<span id="cb29-307"><a href="#cb29-307" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-308"><a href="#cb29-308" aria-hidden="true" tabindex="-1"></a>private<span class="sc">$</span>.parquet_path <span class="ot">=</span> <span class="fu">cached</span>(</span>
+<span id="cb29-309"><a href="#cb29-309" aria-hidden="true" tabindex="-1"></a>  download_parquet, <span class="st">"data_parquet"</span>, self<span class="sc">$</span>id, <span class="at">desc =</span> self<span class="sc">$</span>desc, <span class="at">cache_dir =</span> self<span class="sc">$</span>cache_dir,</span>
+<span id="cb29-310"><a href="#cb29-310" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> self<span class="sc">$</span>server, <span class="at">test_server =</span> self<span class="sc">$</span>test_server, <span class="at">parquet =</span> <span class="cn">TRUE</span></span>
+<span id="cb29-311"><a href="#cb29-311" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-312"><a href="#cb29-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-313"><a href="#cb29-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-314"><a href="#cb29-314" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Triggering the Download**: The download is triggered through <span class="in">`.get_backend()`</span> when we explicitly call <span class="in">`oml_task$data$data`</span> (Line 118-128) or convert it using <span class="in">`as_task()`</span> via <span class="in">`as_data_backend`</span>(Line 259, Line 235-237):</span>
+<span id="cb29-315"><a href="#cb29-315" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-316"><a href="#cb29-316" aria-hidden="true" tabindex="-1"></a><span class="co"># Line 118-128, called when we explicitly call `oml_task$data$data`</span></span>
+<span id="cb29-317"><a href="#cb29-317" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> <span class="cf">function</span>() {</span>
+<span id="cb29-318"><a href="#cb29-318" aria-hidden="true" tabindex="-1"></a>  backend <span class="ot">=</span> private<span class="sc">$</span><span class="fu">.get_backend</span>()</span>
+<span id="cb29-319"><a href="#cb29-319" aria-hidden="true" tabindex="-1"></a>  ii <span class="ot">=</span> <span class="sc">!</span>self<span class="sc">$</span>features<span class="sc">$</span>is_ignore <span class="sc">&amp;</span> <span class="sc">!</span>self<span class="sc">$</span>features<span class="sc">$</span>is_row_identifier</span>
+<span id="cb29-320"><a href="#cb29-320" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">=</span> self<span class="sc">$</span>features<span class="sc">$</span>name[ii]</span>
+<span id="cb29-321"><a href="#cb29-321" aria-hidden="true" tabindex="-1"></a>  existing <span class="ot">=</span> <span class="fu">setdiff</span>(backend<span class="sc">$</span>colnames, backend<span class="sc">$</span>primary_key)</span>
+<span id="cb29-322"><a href="#cb29-322" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">test_subset</span>(cols, existing)) {</span>
+<span id="cb29-323"><a href="#cb29-323" aria-hidden="true" tabindex="-1"></a>    missing <span class="ot">=</span> <span class="fu">setdiff</span>(cols, existing)</span>
+<span id="cb29-324"><a href="#cb29-324" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warningf</span>(<span class="st">"Data is missing features from feature description {%s}.</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">paste0</span>(missing, <span class="at">collapse =</span> <span class="st">", "</span>))</span>
+<span id="cb29-325"><a href="#cb29-325" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-326"><a href="#cb29-326" aria-hidden="true" tabindex="-1"></a>  backend<span class="sc">$</span><span class="fu">data</span>(backend<span class="sc">$</span>rownames, cols)</span>
+<span id="cb29-327"><a href="#cb29-327" aria-hidden="true" tabindex="-1"></a>},</span>
+<span id="cb29-328"><a href="#cb29-328" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-329"><a href="#cb29-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-330"><a href="#cb29-330" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-331"><a href="#cb29-331" aria-hidden="true" tabindex="-1"></a><span class="co"># Line 259, called when we convert it using `as_task()`</span></span>
+<span id="cb29-332"><a href="#cb29-332" aria-hidden="true" tabindex="-1"></a>task <span class="ot">=</span> constructor<span class="sc">$</span><span class="fu">new</span>(x<span class="sc">$</span>name, <span class="fu">as_data_backend</span>(x), <span class="at">target =</span> target)</span>
+<span id="cb29-333"><a href="#cb29-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-334"><a href="#cb29-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-335"><a href="#cb29-335" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb29-336"><a href="#cb29-336" aria-hidden="true" tabindex="-1"></a><span class="co"># Line 235-237</span></span>
+<span id="cb29-337"><a href="#cb29-337" aria-hidden="true" tabindex="-1"></a>as_data_backend.OMLData <span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">primary_key =</span> <span class="cn">NULL</span>, ...) {</span>
+<span id="cb29-338"><a href="#cb29-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_private</span>(data)<span class="sc">$</span><span class="fu">.get_backend</span>(primary_key)</span>
+<span id="cb29-339"><a href="#cb29-339" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-340"><a href="#cb29-340" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-341"><a href="#cb29-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-342"><a href="#cb29-342" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**The Parquet Fallback Mechanism**:</span>
+<span id="cb29-343"><a href="#cb29-343" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**Hard Error**: If <span class="in">`parquet = TRUE`</span> but <span class="in">`duckdb`</span> or other dependencies is missing, the code halts at <span class="in">`require_namespaces()`</span>.</span>
+<span id="cb29-344"><a href="#cb29-344" aria-hidden="true" tabindex="-1"></a>   <span class="in">```r</span></span>
+<span id="cb29-345"><a href="#cb29-345" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Line 207</span></span>
+<span id="cb29-346"><a href="#cb29-346" aria-hidden="true" tabindex="-1"></a>   <span class="fu">require_namespaces</span>(<span class="fu">c</span>(<span class="st">"mlr3db"</span>, <span class="st">"duckdb"</span>, <span class="st">"DBI"</span>))</span>
+<span id="cb29-347"><a href="#cb29-347" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb29-348"><a href="#cb29-348" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**Silent Fallback**: If the Parquet file does not exist on the OpenML server, the <span class="in">`try()`</span> block catches the error, and the system seamlessly falls back to downloading the ARFF version.</span>
+<span id="cb29-349"><a href="#cb29-349" aria-hidden="true" tabindex="-1"></a>   <span class="in">```r</span></span>
+<span id="cb29-350"><a href="#cb29-350" aria-hidden="true" tabindex="-1"></a>   path <span class="ot">=</span> <span class="fu">try</span>({self<span class="sc">$</span>parquet_path}, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-351"><a href="#cb29-351" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (<span class="fu">inherits</span>(path, <span class="st">"try-error"</span>)) {</span>
+<span id="cb29-352"><a href="#cb29-352" aria-hidden="true" tabindex="-1"></a>     lg<span class="sc">$</span><span class="fu">info</span>(<span class="st">"Failed to download parquet, trying arff."</span>, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
+<span id="cb29-353"><a href="#cb29-353" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb29-354"><a href="#cb29-354" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb29-355"><a href="#cb29-355" aria-hidden="true" tabindex="-1"></a>   If failed to creat a Parquet backend, the system seamlessly falls back to downloading the ARFF version as well:</span>
+<span id="cb29-356"><a href="#cb29-356" aria-hidden="true" tabindex="-1"></a>   <span class="in">```r</span></span>
+<span id="cb29-357"><a href="#cb29-357" aria-hidden="true" tabindex="-1"></a>   backend <span class="ot">=</span> <span class="fu">try</span>(<span class="fu">as_duckdb_backend_character</span>(path, <span class="at">primary_key =</span> primary_key, <span class="at">factors =</span> factors), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-358"><a href="#cb29-358" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (<span class="fu">inherits</span>(backend, <span class="st">"try-error"</span>)) {</span>
+<span id="cb29-359"><a href="#cb29-359" aria-hidden="true" tabindex="-1"></a>    msg <span class="ot">=</span> <span class="fu">sprintf</span>(</span>
+<span id="cb29-360"><a href="#cb29-360" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Parquet available but failed to create backend, reverting to arff. Error message is '%s'"</span>, <span class="co"># nolint</span></span>
+<span id="cb29-361"><a href="#cb29-361" aria-hidden="true" tabindex="-1"></a>      backend</span>
+<span id="cb29-362"><a href="#cb29-362" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb29-363"><a href="#cb29-363" aria-hidden="true" tabindex="-1"></a>     lg<span class="sc">$</span><span class="fu">info</span>(msg, <span class="at">id =</span> self<span class="sc">$</span>id)</span>
+<span id="cb29-364"><a href="#cb29-364" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-365"><a href="#cb29-365" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb29-366"><a href="#cb29-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Conclusion</span></span>
+<span id="cb29-368"><a href="#cb29-368" aria-hidden="true" tabindex="-1"></a>This report explored the <span class="in">`ostk`</span> in <span class="in">`mlr3oml`</span> package, analyzing its data retrieval mechanisms, format preferences (ARFF vs. Parquet).</span>
+<span id="cb29-369"><a href="#cb29-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-370"><a href="#cb29-370" aria-hidden="true" tabindex="-1"></a>I inspected the <span class="co">[</span><span class="ot">`OMLData.R` source code</span><span class="co">](https://github.com/mlr-org/mlr3oml/blob/main/R/OMLData.R)</span> from the <span class="in">`mlr3oml`</span> GitHub repository to understand the data fetching process.</span>
+<span id="cb29-371"><a href="#cb29-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-372"><a href="#cb29-372" aria-hidden="true" tabindex="-1"></a>I provided a <span class="co">[</span><span class="ot">R script</span><span class="co">](https://github.com/weicaocw/mlr3-pkgs/blob/main/mlr3hf/entry_tasks/easy/comprehensive_comparison_arff_parquet.r)</span> to test the speed and size of ARFF vs. Parquet for the small dataset: kr-vs-kp and a very large dataset: physionet_sepsis (1552210*44).</span>
+<span id="cb29-373"><a href="#cb29-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-374"><a href="#cb29-374" aria-hidden="true" tabindex="-1"></a>The results showed that Parquet is a possibly better choice for large datasets with less download time and less space consumption. ARFF are downloaded and converted to qs2 format to cache instantly. Loading from the cache, ARFF is faster than Parquet. It is evident that the loading of both formats use multiple cores.</span>
+<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-376"><a href="#cb29-376" aria-hidden="true" tabindex="-1"></a>One final remark: I really wanted to explore is there any performance difference while analyzing a large dataset with ARFF and Parquet, especially when the queries are parquet-friendly. Or is it not format-dependent once the data is loaded? But it is beyond the scope of this report.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
