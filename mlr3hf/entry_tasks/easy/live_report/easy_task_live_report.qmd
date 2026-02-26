@@ -213,19 +213,21 @@ INFO  [01:01:10.427] Retrieving JSON {url: `https://www.openml.org/api/v1/json/d
 ```
 
 Here are some key observations:
-- The speed of reading the data from Parquet is much faster than from ARFF: 19.880 seconds vs. 99.319 seconds.
-- When selecting ARFF, the actual cached format is qs2, whose goal to have reliable and fast performance for saving and loading objects in R.
-- The size of the Parquet file is smaller than the qs2 file: 17000952 bytes vs. 21767295 bytes.
-- Loading from the cache, the time of reading the data from Parquet is not less than the time of reading the data from ARFF: 2.592 seconds vs. 1.391 seconds.
-- Loading from the cache, both ARFF and Parquet have less elapsed time than the sum of user and system time:
+
+1. The speed of reading the data from Parquet is much faster than from ARFF: 19.880 seconds vs. 99.319 seconds.
+2. When selecting ARFF, the actual cached format is qs2, which aims to provide reliable and fast performance for saving and loading objects in R.
+3. The size of the Parquet file is smaller than the qs2 file: 17000952 bytes vs. 21767295 bytes.
+4. Loading from the cache, the time of reading the data from Parquet is not less than the time of reading the data from ARFF: 2.592 seconds vs. 1.391 seconds.
+5. Loading from the cache, both ARFF and Parquet have elapsed time lower than the sum of user and system time:
   - ARFF: 1.391 seconds vs. 1.366 seconds + 0.641 seconds = 2.007 seconds
   - Parquet: 2.592 seconds vs. 3.131 seconds + 0.945 seconds = 4.076 seconds
 
 Conclusion:
-- Parquet is a possibly better choice for large datasets with less download time and less space consumption.
-- ARFF are downloaded and converted to qs2 format to cache instantly.
-- Loading from the cache, ARFF is faster than Parquet.
-- It is evident that the loading of both formats use multiple cores.
+
+1. Parquet is possibly a better choice for large datasets, with less download time and less space consumption.
+2. ARFF data is downloaded and converted to qs2 format for caching.
+3. Loading from the cache, ARFF is faster than Parquet.
+4. It is evident that loading both formats uses multiple cores.
 
 
 One final remark:
