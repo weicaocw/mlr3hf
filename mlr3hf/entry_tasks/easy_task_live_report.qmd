@@ -18,6 +18,16 @@ execute:
 
 This report explores the `ostk` in `mlr3oml` package, analyzing its data retrieval mechanisms, format preferences (ARFF vs. Parquet).
 
+This experiment runs on an AutoDL cloud server with the following environment and hardware/software configuration:
+- Image: PyTorch 2.5.1 + Python 3.12 (Ubuntu 22.04) + CUDA 12.4
+- GPU: 1 × NVIDIA RTX 3060 (12GB)
+- CPU: 7 vCPU Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
+- Memory: 15GB
+- Disk: 30GB system disk, free 50GB SSD data disk (no paid disk), no additional disk
+- Port mapping: None
+- Custom service ports: 6006 (HTTP), 6008 (HTTP)
+- Networking: Shared bandwidth with other instances in the same region
+
 Based on the [mlr3oml documentation](https://mlr3oml.mlr-org.com/index.html), we can easily fetch an OpenML task. I set the cache to FALSE to avoid the cache files from the previous experiments.
 ```{r set_cache_false}
 options(mlr3oml.cache = FALSE)
@@ -106,7 +116,7 @@ The documentation specifies `test_server` as `character(1)`, yet the default fal
 #### 2.2.1 Parquet for the small dataset: kr-vs-kp
 Let's try parquet for the small dataset: kr-vs-kp.
 
-```{r setup}
+```{r experiment_parquet}
 library(mlr3oml)
 library(mlr3)
 options(mlr3oml.cache = FALSE)
