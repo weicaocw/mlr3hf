@@ -1,10 +1,31 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome to My GSoC Journal",
+    "objectID": "entry_tasks/hard/live_report/hard_live_report.html",
+    "href": "entry_tasks/hard/live_report/hard_live_report.html",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
     "section": "",
-    "text": "Welcome to my GSoC 2026 mlr3hf project journal.\nUse the navigation bar to browse project reports, including the Easy Task write-up."
+    "text": "This live report firstly documents the Minimum Viable Product (MVP) for the mlr3hf Hard Task. The goal is to download a dataset from the Hugging Face Hub and convert it into a standard mlr3 task using only native R tooling, without Python dependencies such as reticulate. Along the way, I will record the problems I encountered and the solutions I adopted. Besides, I will also communicate my thoughts on future development to fulfill an production-level package with regard to performance, robustness and reliability.\nSecondly, I will summarize the engineering challenges for a production-level package and provide my current implementation: structure and logic.\nLastly, I will conclude this report and my further thoughts on the future development of this package."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report.html#breaksdown-of-the-problem",
+    "href": "entry_tasks/hard/live_report/hard_live_report.html#breaksdown-of-the-problem",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "2.1 Breaksdown of the Problem",
+    "text": "2.1 Breaksdown of the Problem\nThe problem can be briefly broken down into the following steps:\n\nFetch the metadata of the dataset from the Hugging Face Data Server API.\nRetrieve the Parquet URL from the metadata.\nDownload the Parquet file to the local machine.\nRead the Parquet file and convert it into a mlr3 task."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report.html#fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api",
+    "href": "entry_tasks/hard/live_report/hard_live_report.html#fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "2.2 Fetch the metadata of the dataset from the Hugging Face Data Server API",
+    "text": "2.2 Fetch the metadata of the dataset from the Hugging Face Data Server API\nAccording to the HF Data Viewer Document, Datasets can be published in any format (CSV, JSONL, directories of images, etc.) to the Hub, and they are easily accessed with the Datasets library. For a more performant experience (especially when it comes to large datasets), the dataset viewer automatically converts every dataset to the Parquet format. This is a good news for us, since we don’t have to deal with diverse data formats and concentrate on Parquet via its parquet endpoint.\nHere I use httr2 to visit the server since it is a modern and easy-to-use HTTP client library for R.\n\n\nCode\nlibrary(httr2)\n\nreq &lt;- request(\"https://datasets-server.huggingface.co/parquet\") |&gt;\n    req_url_query(dataset = \"fka/prompts.chat\") |&gt;\n    req_retry(max_tries = 3)\n\nresp &lt;- req_perform(req)\n\nmeta &lt;- resp |&gt; resp_body_json()\n\nmeta |&gt; str()\n\n\nList of 4\n $ parquet_files:List of 1\n  ..$ :List of 6\n  .. ..$ dataset : chr \"fka/prompts.chat\"\n  .. ..$ config  : chr \"default\"\n  .. ..$ split   : chr \"train\"\n  .. ..$ url     : chr \"https://huggingface.co/datasets/fka/prompts.chat/resolve/refs%2Fconvert%2Fparquet/default/train/0000.parquet\"\n  .. ..$ filename: chr \"0000.parquet\"\n  .. ..$ size    : int 1724280\n $ pending      : list()\n $ failed       : list()\n $ partial      : logi FALSE\n\n\nAmong the metadata, the most important one is the Parquet URL, with which we can download the Parquet file to the local machine. The size of the Parquet file is 1.64 MB."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report.html#download-the-parquet-file-to-the-local-machine",
+    "href": "entry_tasks/hard/live_report/hard_live_report.html#download-the-parquet-file-to-the-local-machine",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "2.3 Download the Parquet file to the local machine",
+    "text": "2.3 Download the Parquet file to the local machine\nFirstly, I wanted to download the file and convert it into a mlr3 task in one go."
   },
   {
     "objectID": "entry_tasks/easy/live_report/easy_task_live_report.html",
@@ -33,5 +54,96 @@
     "title": "mlr3hf Easy Task: Deep Dive into mlr3oml and Data Fetching",
     "section": "",
     "text": "In the blink of an eye, the resample task for the small dataset is completed. However, for the large dataset, it takes time.\nWhile using ostk to access the data, we can see the following logs:\nINFO  [23:32:05.482] Retrieving JSON {url: `https://www.openml.org/api/v1/json/task/146606`, authenticated: `FALSE`}\nINFO  [23:32:06.064] Retrieving JSON {url: `https://www.openml.org/api/v1/json/data/qualities/23512`, authenticated: `FALSE`}\nINFO  [23:32:06.622] Retrieving JSON {url: `https://www.openml.org/api/v1/json/data/features/23512`, authenticated: `FALSE`}\nINFO  [23:32:07.123] Retrieving JSON {url: `https://www.openml.org/api/v1/json/data/23512`, authenticated: `FALSE`}\nOnly JSON metadata is downloaded, the ARFF data file is not downloaded until as_task and as_resampling are called.\nINFO  [23:32:07.650] Retrieving ARFF {url: `https://openml.org/data/v1/download/2063675/higgs.arff`, authenticated: `FALSE`}\nINFO  [23:32:25.445] Retrieving ARFF {url: `https://openml.org/api_splits/get/146606/Task_146606_splits.arff`, authenticated: `FALSE`}\nIn fact, the ARFF data file is not downloaded until as_task is called, and the splits file is not downloaded until as_resampling is called. We will examine the source code to understand the data fetching process later."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to My GSoC Journal",
+    "section": "",
+    "text": "Welcome to my GSoC 2026 mlr3hf project journal.\nUse the navigation bar to browse project reports, including the Easy Task write-up."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "",
+    "text": "Environment was detected locally on March 4, 2026.\n\n\n\nItem\nValue\n\n\n\n\nOS Kernel\nDarwin 25.0.0 x86_64\n\n\nOS Version\nmacOS 26.0.1 (Build 25A362)\n\n\nMachine Model\nMacBook Pro (MacBookPro16,1)\n\n\nCPU\nIntel Core i7, 2.6 GHz, 6 cores\n\n\nMemory\n32 GB\n\n\nR Version\nR 4.5.2 (2025-10-31)\n\n\nC Compiler (CC)\nclang -std=gnu2x\n\n\nC++ Compiler (CXX)\nclang++ -std=gnu++17"
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#local-environment-snapshot",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#local-environment-snapshot",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "",
+    "text": "Environment was detected locally on March 4, 2026.\n\n\n\nItem\nValue\n\n\n\n\nOS Kernel\nDarwin 25.0.0 x86_64\n\n\nOS Version\nmacOS 26.0.1 (Build 25A362)\n\n\nMachine Model\nMacBook Pro (MacBookPro16,1)\n\n\nCPU\nIntel Core i7, 2.6 GHz, 6 cores\n\n\nMemory\n32 GB\n\n\nR Version\nR 4.5.2 (2025-10-31)\n\n\nC Compiler (CC)\nclang -std=gnu2x\n\n\nC++ Compiler (CXX)\nclang++ -std=gnu++17"
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#executive-summary-and-task-objective",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#executive-summary-and-task-objective",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "1. Executive Summary and Task Objective",
+    "text": "1. Executive Summary and Task Objective\nThis live report documents the Minimum Viable Product (MVP) for the mlr3hf Hard Task. The goal is to download a dataset from the Hugging Face Hub and convert it into a standard mlr3 task using only native R tooling, without Python dependencies such as reticulate.\nBeyond the MVP code path, this report also highlights architecture constraints, performance choices, and a practical roadmap toward a production-quality CRAN package."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#mvp-implementation-fkaprompts.chat-case-study",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#mvp-implementation-fkaprompts.chat-case-study",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "2. MVP Implementation: fka/prompts.chat Case Study",
+    "text": "2. MVP Implementation: fka/prompts.chat Case Study\nThis section demonstrates an end-to-end path built with httr2, duckdb, and data.table.\n\n3.1 Fetch Metadata and Retrieve the Parquet URL\n\n\nCode\nlibrary(httr2)\n\ndataset_id &lt;- \"fka/prompts.chat\"\napi_url &lt;- \"https://datasets-server.huggingface.co/parquet\"\n\nreq &lt;- request(api_url) |&gt;\n    req_url_query(dataset = dataset_id) |&gt;\n    req_retry(max_tries = 3)\n\nresp &lt;- req_perform(req)\nmeta &lt;- resp_body_json(resp)\n\nstopifnot(length(meta$parquet_files) &gt; 0)\nparquet_url &lt;- meta$parquet_files[[1]]$url\n\ncat(\"Parquet URL retrieved:\\n\", parquet_url, \"\\n\")\n\n\nParquet URL retrieved:\n https://huggingface.co/datasets/fka/prompts.chat/resolve/refs%2Fconvert%2Fparquet/default/train/0000.parquet \n\n\n\n\n3.2 Stream to Disk to Protect Memory\n\n\nCode\ntmp_file &lt;- tempfile(fileext = \".parquet\")\n\nrequest(parquet_url) |&gt;\n    req_perform(path = tmp_file)\n\n\n&lt;httr2_response&gt;\nGET https://cas-bridge.xethub.hf.co/xet-bridge-us/63990f21cc50af73d29ecfa3/022ab4c5690d8857591c6b1efab63e5a30a10ada1005ecb3137729d412e04729?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cas%2F20260304%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260304T153924Z&X-Amz-Expires=3600&X-Amz-Signature=97131b9053d792f446d5efafe1ee101f5657b5cf2e1eef2254d35fcb8236488b&X-Amz-SignedHeaders=host&X-Xet-Cas-Uid=public&response-content-disposition=inline%3B+filename*%3DUTF-8%27%270000.parquet%3B+filename%3D%220000.parquet%22%3B&x-amz-checksum-mode=ENABLED&x-id=GetObject&Expires=1772642364&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc3MjY0MjM2NH19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2FzLWJyaWRnZS54ZXRodWIuaGYuY28veGV0LWJyaWRnZS11cy82Mzk5MGYyMWNjNTBhZjczZDI5ZWNmYTMvMDIyYWI0YzU2OTBkODg1NzU5MWM2YjFlZmFiNjNlNWEzMGExMGFkYTEwMDVlY2IzMTM3NzI5ZDQxMmUwNDcyOSoifV19&Signature=IyRNkeugtlpMnBlvrdKuTV-qoPJM4YXcWO2emglmg8WCgQRzAT5su1k1D6MyUDktBAZ7UZ-NqZ789PO1xs1KD75Y8moCfpFEJn3PY0gDcCb%7EkJY4hvMuPhOSM3-agXVxJN1FlzuZJfBaToh2AIpowFHgRLYsNvb8wKlYKvqGSkLAYH3O28-lYr8E71PCs0MgpCp2Q7oeALNtXKO2lSGlQUEa3P3bq6kLM9Z9ugCZWP90Bv-RiG78gBCHwF44A1Y6h3K2vzB3XxmZamKVM3ne6ZfEfgt8AxdEXyDzBgNd3RCjMtqCrCBAJKSfTgCDyP4HrMOmreAUndibqb5GySI73w__&Key-Pair-Id=K2L8F4GPSG1IFC\nStatus: 200 OK\nBody: On disk '/var/folders/cd/8ncrly493_1101j5bf9zcx240000gn/T//RtmpvHhgS6/file16c37691e491f.parquet' (1724280 bytes)\n\n\nCode\ncat(\"Parquet saved to:\", tmp_file, \"\\n\")\n\n\nParquet saved to: /var/folders/cd/8ncrly493_1101j5bf9zcx240000gn/T//RtmpvHhgS6/file16c37691e491f.parquet \n\n\nCode\ncat(\"File size (bytes):\", file.info(tmp_file)$size, \"\\n\")\n\n\nFile size (bytes): 1724280 \n\n\n\n\n3.3 Query with DuckDB and Clean with data.table\n\n\nCode\nlibrary(DBI)\nlibrary(duckdb)\nlibrary(data.table)\n\ncon &lt;- dbConnect(duckdb())\nquery &lt;- sprintf(\n    \"SELECT * FROM read_parquet(%s)\",\n    dbQuoteString(con, tmp_file)\n)\ndata &lt;- dbGetQuery(con, query)\n\nsetDT(data)\n\nif (\"for_devs\" %in% names(data)) {\n    data[, for_devs := as.factor(for_devs)]\n}\n\nif (\"mlr3_row_id\" %in% names(data)) {\n    data[, mlr3_row_id := NULL]\n}\n\nhead(data, 3)\n\n\n                               act\n                            &lt;char&gt;\n1:              Ethereum Developer\n2:                  Linux Terminal\n3: English Translator and Improver\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               prompt\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               &lt;char&gt;\n1:                 Imagine you are an experienced Ethereum developer tasked with creating a smart contract for a blockchain messenger. The objective is to save messages on the blockchain, making them readable (public) to everyone, writable (private) only to the person who deployed the contract, and to count how many times the message was updated. Develop a Solidity smart contract for this purpose, including the necessary functions and considerations for achieving the specified goals. Please provide the code and any relevant explanations to ensure a clear understanding of the implementation.\n2:                                                                                                                                                                         I want you to act as a linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. do not write explanations. do not type commands unless I instruct you to do so. when i need to tell you something in english, i will do so by putting text inside curly brackets {like this}. my first command is pwd\n3: I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is \"istanbulu cok seviyom burada olmak cok guzel\"\n   for_devs   type contributor\n     &lt;fctr&gt; &lt;char&gt;      &lt;char&gt;\n1:     TRUE   TEXT  ameya-2003\n2:     TRUE   TEXT           f\n3:    FALSE   TEXT           f\n\n\nCode\ndbDisconnect(con, shutdown = TRUE)\n\n\n\n\n3.4 Construct the mlr3 Classification Task\n\n\nCode\nlibrary(mlr3)\n\nstopifnot(\"for_devs\" %in% names(data))\ntask &lt;- as_task_classif(data, target = \"for_devs\", id = \"hf_prompts_task\")\n\ntask\n\n\n\n── &lt;TaskClassif&gt; (1395x5) ──────────────────────────────────────────────────────\n• Target: for_devs\n• Target classes: FALSE (positive class, 93%), TRUE (7%)\n• Properties: twoclass\n• Features (4):\n  • chr (4): act, contributor, prompt, type"
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#future-roadmap-and-api-design",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#future-roadmap-and-api-design",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "3. Future Roadmap and API Design",
+    "text": "3. Future Roadmap and API Design\n\n3.1 Lessons Learned from Easy Task using ostk\nWhen doing the easy task, we learned the following lessons, and they should be considered in the future design.\n\n\n3.1.1 Lazy Loading\nWhile reading the mlr3oml source code, I noticed that when ostk() is called, it only downloads metadata. The actual data is downloaded only when as_task is used or when $data$data is accessed. This behavior should also be integrated into our design.\n\n\n3.1.2 Caching issue: very large datasets\nVery large datasets may consist of multiple Parquet files, which differs from the MVP where only a single file is handled. Users are also likely to want to use caching, so this needs to be handled properly.\n\n\n3.1.3 Fallback\nHas the HF data server really prepared proper Parquet files for all datasets? What if some are not ready? In that case, do we have no option, or is it necessary to download the original format (e.g., CSV) directly? Or should we just return an error? In addition to this, setting up Parquet is a heavy operation. For example, the compiling of duckdb costs more than half an hour. So we need to consider the performance impact of this operation. If the user does not want to use Parquet, we should not force them to use it."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#robustness",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#robustness",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "3.2 Robustness",
+    "text": "3.2 Robustness\nAt a basic level, we need robust engineering practices, such as checking HTTP status codes during network downloads. At a more advanced level, can we support resume-from-breakpoint downloads and multithreaded downloading?"
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#customized-tasks-usability-oriented-interfaces",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#customized-tasks-usability-oriented-interfaces",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "3.3 Customized Tasks: usability-oriented interfaces",
+    "text": "3.3 Customized Tasks: usability-oriented interfaces\nThere are many advanced requirements for customized tasks, such as merging fields. Can we provide a more user-friendly interface so users do not need to manipulate data.table directly, manually compose view/query statements, or build mlr3pipelines by themselves?"
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#support-conversion-to-multiple-task-types",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#support-conversion-to-multiple-task-types",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "3.4 Support conversion to multiple task types",
+    "text": "3.4 Support conversion to multiple task types\nClassification, regression, and Supervised Data Stream Classification. It seems mlr3oml previously could not handle task 7317 of type Supervised Data Stream Classification, and raised an error because the type was not recognized."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#deal-with-very-large-datasets",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#deal-with-very-large-datasets",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "3.5 Deal with very large datasets",
+    "text": "3.5 Deal with very large datasets\nVery large datasets: when we eventually handle truly large datasets (e.g., 100 GB) that cannot be loaded into a data.table at once, we may need lower-level solutions (such as modifying the DuckDB backend dictionary mapping table col_info).\nThis is another engineering challenge caused by very large datasets. More challenges may appear later; this list only includes issues encountered so far."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#network-constraints-user-configurable-servers",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#network-constraints-user-configurable-servers",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "3.6 Network constraints: user-configurable servers",
+    "text": "3.6 Network constraints: user-configurable servers\nFor network-restricted hosts (e.g., AutoDL in China mainland) that cannot access the HF data server, we should not hard-code this URL. Users should be allowed to configure their own mirror endpoint."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#other-considerations",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#other-considerations",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "3.7 Other considerations",
+    "text": "3.7 Other considerations\nWe can learn from existing solutions: how do Python-based approaches solve these problems?\nWe need to study their source code to identify issues we may not have considered yet."
+  },
+  {
+    "objectID": "entry_tasks/hard/live_report/hard_live_report copy.html#try-to-do-it-at-once-wip",
+    "href": "entry_tasks/hard/live_report/hard_live_report copy.html#try-to-do-it-at-once-wip",
+    "title": "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks",
+    "section": "4. Try to do it at once [WIP]",
+    "text": "4. Try to do it at once [WIP]\nI have already done the MVP implementation. Now with the lessons learned, why not do it at once?"
   }
 ]
