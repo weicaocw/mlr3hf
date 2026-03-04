@@ -51,8 +51,8 @@ dataset_id <- "fka/prompts.chat"
 api_url <- "https://datasets-server.huggingface.co/parquet"
 
 req <- request(api_url) |>
-  req_url_query(dataset = dataset_id) |>
-  req_retry(max_tries = 3)
+    req_url_query(dataset = dataset_id) |>
+    req_retry(max_tries = 3)
 
 resp <- req_perform(req)
 meta <- resp_body_json(resp)
@@ -69,7 +69,7 @@ cat("Parquet URL retrieved:\n", parquet_url, "\n")
 tmp_file <- tempfile(fileext = ".parquet")
 
 request(parquet_url) |>
-  req_perform(path = tmp_file)
+    req_perform(path = tmp_file)
 
 cat("Parquet saved to:", tmp_file, "\n")
 cat("File size (bytes):", file.info(tmp_file)$size, "\n")
@@ -84,19 +84,19 @@ library(data.table)
 
 con <- dbConnect(duckdb())
 query <- sprintf(
-  "SELECT * FROM read_parquet(%s)",
-  dbQuoteString(con, tmp_file)
+    "SELECT * FROM read_parquet(%s)",
+    dbQuoteString(con, tmp_file)
 )
 data <- dbGetQuery(con, query)
 
 setDT(data)
 
 if ("for_devs" %in% names(data)) {
-  data[, for_devs := as.factor(for_devs)]
+    data[, for_devs := as.factor(for_devs)]
 }
 
 if ("mlr3_row_id" %in% names(data)) {
-  data[, mlr3_row_id := NULL]
+    data[, mlr3_row_id := NULL]
 }
 
 head(data, 3)
