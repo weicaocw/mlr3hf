@@ -154,13 +154,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">1. Introduction</a></li>
+  <li><a href="#local-environment-snapshot" id="toc-local-environment-snapshot" class="nav-link active" data-scroll-target="#local-environment-snapshot">0. Local Environment Snapshot</a></li>
+  <li><a href="#executive-summary-and-task-objective" id="toc-executive-summary-and-task-objective" class="nav-link" data-scroll-target="#executive-summary-and-task-objective">1. Executive Summary and Task Objective</a></li>
   <li><a href="#mvp-implementation-fkaprompts.chat-case-study" id="toc-mvp-implementation-fkaprompts.chat-case-study" class="nav-link" data-scroll-target="#mvp-implementation-fkaprompts.chat-case-study">2. MVP Implementation: <code>fka/prompts.chat</code> Case Study</a>
   <ul class="collapse">
-  <li><a href="#breaksdown-of-the-problem" id="toc-breaksdown-of-the-problem" class="nav-link" data-scroll-target="#breaksdown-of-the-problem">2.1 Breaksdown of the Problem</a></li>
-  <li><a href="#fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api" id="toc-fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api" class="nav-link" data-scroll-target="#fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api">2.2 Fetch the metadata of the dataset from the Hugging Face Data Server API</a></li>
-  <li><a href="#download-the-parquet-file-to-the-local-machine" id="toc-download-the-parquet-file-to-the-local-machine" class="nav-link" data-scroll-target="#download-the-parquet-file-to-the-local-machine">2.3 Download the Parquet file to the local machine</a></li>
+  <li><a href="#fetch-metadata-and-retrieve-the-parquet-url" id="toc-fetch-metadata-and-retrieve-the-parquet-url" class="nav-link" data-scroll-target="#fetch-metadata-and-retrieve-the-parquet-url">3.1 Fetch Metadata and Retrieve the Parquet URL</a></li>
+  <li><a href="#stream-to-disk-to-protect-memory" id="toc-stream-to-disk-to-protect-memory" class="nav-link" data-scroll-target="#stream-to-disk-to-protect-memory">3.2 Stream to Disk to Protect Memory</a></li>
+  <li><a href="#query-with-duckdb-and-clean-with-data.table" id="toc-query-with-duckdb-and-clean-with-data.table" class="nav-link" data-scroll-target="#query-with-duckdb-and-clean-with-data.table">3.3 Query with DuckDB and Clean with data.table</a></li>
+  <li><a href="#construct-the-mlr3-classification-task" id="toc-construct-the-mlr3-classification-task" class="nav-link" data-scroll-target="#construct-the-mlr3-classification-task">3.4 Construct the <code>mlr3</code> Classification Task</a></li>
   </ul></li>
+  <li><a href="#future-roadmap-and-api-design" id="toc-future-roadmap-and-api-design" class="nav-link" data-scroll-target="#future-roadmap-and-api-design">3. Future Roadmap and API Design</a>
+  <ul class="collapse">
+  <li><a href="#lessons-learned-from-easy-task-using-ostk" id="toc-lessons-learned-from-easy-task-using-ostk" class="nav-link" data-scroll-target="#lessons-learned-from-easy-task-using-ostk">3.1 Lessons Learned from Easy Task using <code>ostk</code></a></li>
+  <li><a href="#lazy-loading" id="toc-lazy-loading" class="nav-link" data-scroll-target="#lazy-loading">3.1.1 Lazy Loading</a></li>
+  <li><a href="#caching-issue-very-large-datasets" id="toc-caching-issue-very-large-datasets" class="nav-link" data-scroll-target="#caching-issue-very-large-datasets">3.1.2 Caching issue: very large datasets</a></li>
+  <li><a href="#fallback" id="toc-fallback" class="nav-link" data-scroll-target="#fallback">3.1.3 Fallback</a></li>
+  </ul></li>
+  <li><a href="#robustness" id="toc-robustness" class="nav-link" data-scroll-target="#robustness">3.2 Robustness</a></li>
+  <li><a href="#customized-tasks-usability-oriented-interfaces" id="toc-customized-tasks-usability-oriented-interfaces" class="nav-link" data-scroll-target="#customized-tasks-usability-oriented-interfaces">3.3 Customized Tasks: usability-oriented interfaces</a></li>
+  <li><a href="#support-conversion-to-multiple-task-types" id="toc-support-conversion-to-multiple-task-types" class="nav-link" data-scroll-target="#support-conversion-to-multiple-task-types">3.4 Support conversion to multiple task types</a></li>
+  <li><a href="#deal-with-very-large-datasets" id="toc-deal-with-very-large-datasets" class="nav-link" data-scroll-target="#deal-with-very-large-datasets">3.5 Deal with very large datasets</a></li>
+  <li><a href="#network-constraints-user-configurable-servers" id="toc-network-constraints-user-configurable-servers" class="nav-link" data-scroll-target="#network-constraints-user-configurable-servers">3.6 Network constraints: user-configurable servers</a></li>
+  <li><a href="#other-considerations" id="toc-other-considerations" class="nav-link" data-scroll-target="#other-considerations">3.7 Other considerations</a></li>
+  <li><a href="#try-to-do-it-at-once-wip" id="toc-try-to-do-it-at-once-wip" class="nav-link" data-scroll-target="#try-to-do-it-at-once-wip">4. Try to do it at once [WIP]</a></li>
   </ul>
 </nav>
     </div>
@@ -198,79 +214,247 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="introduction" class="level1">
-<h1>1. Introduction</h1>
-<p>This live report firstly documents the Minimum Viable Product (MVP) for the <code>mlr3hf</code> Hard Task. The goal is to download a dataset from the Hugging Face Hub and convert it into a standard <code>mlr3</code> task using only native R tooling, without Python dependencies such as <code>reticulate</code>. Along the way, I will record the problems I encountered and the solutions I adopted. Besides, I will also communicate my thoughts on future development to fulfill an production-level package with regard to performance, robustness and reliability.</p>
-<p>Secondly, I will summarize the engineering challenges for a production-level package and provide my current implementation: structure and logic.</p>
-<p>Lastly, I will conclude this report and my further thoughts on the future development of this package.</p>
+<section id="local-environment-snapshot" class="level2">
+<h2 class="anchored" data-anchor-id="local-environment-snapshot">0. Local Environment Snapshot</h2>
+<p>Environment was detected locally on March 4, 2026.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS Kernel</td>
+<td>Darwin 25.0.0 x86_64</td>
+</tr>
+<tr class="even">
+<td>OS Version</td>
+<td>macOS 26.0.1 (Build 25A362)</td>
+</tr>
+<tr class="odd">
+<td>Machine Model</td>
+<td>MacBook Pro (MacBookPro16,1)</td>
+</tr>
+<tr class="even">
+<td>CPU</td>
+<td>Intel Core i7, 2.6 GHz, 6 cores</td>
+</tr>
+<tr class="odd">
+<td>Memory</td>
+<td>32 GB</td>
+</tr>
+<tr class="even">
+<td>R Version</td>
+<td>R 4.5.2 (2025-10-31)</td>
+</tr>
+<tr class="odd">
+<td>C Compiler (CC)</td>
+<td>clang -std=gnu2x</td>
+</tr>
+<tr class="even">
+<td>C++ Compiler (CXX)</td>
+<td>clang++ -std=gnu++17</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="mvp-implementation-fkaprompts.chat-case-study" class="level1">
-<h1>2. MVP Implementation: <code>fka/prompts.chat</code> Case Study</h1>
-<p><a href="https://huggingface.co/datasets/fka/prompts.chat"><code>fka/prompts.chat</code></a> is an open-source platform where users can share, discover, and collect AI prompts from the community. The project can be self-hosted with customizable branding, themes, and authentication. The dataset contains 1334 rows and 5 columns: <code>act</code>, <code>prompt</code>, <code>for_devs</code>, <code>type</code>, <code>contributor</code>.</p>
-<p>The following environment details were detected on this machine on <strong>2026-02-27</strong>:</p>
-<ul>
-<li>Hardware model: <code>MacBook Pro</code> (<code>MacBookPro16,1</code>)</li>
-<li>CPU: <code>Intel Core i7</code> (<code>2.6 GHz</code>)</li>
-<li>Memory: <code>32 GB</code></li>
-<li>Operating system: <code>macOS 26.0.1</code> (build <code>25A362</code>)</li>
-<li>Kernel and architecture: <code>Darwin 25.0.0 x86_64</code></li>
-<li>R version: <code>R version 4.5.2 (2025-10-31)</code></li>
-<li>Location: <code>Ottawa, Ontario, Canada</code></li>
-</ul>
-<section id="breaksdown-of-the-problem" class="level2">
-<h2 class="anchored" data-anchor-id="breaksdown-of-the-problem">2.1 Breaksdown of the Problem</h2>
-<p>The problem can be briefly broken down into the following steps:</p>
-<ol type="1">
-<li>Fetch the metadata of the dataset from the Hugging Face Data Server API.</li>
-<li>Retrieve the Parquet URL from the metadata.</li>
-<li>Download the Parquet file to the local machine.</li>
-<li>Read the Parquet file and convert it into a <code>mlr3</code> task.</li>
-</ol>
+<section id="executive-summary-and-task-objective" class="level2">
+<h2 class="anchored" data-anchor-id="executive-summary-and-task-objective">1. Executive Summary and Task Objective</h2>
+<p>This live report documents the Minimum Viable Product (MVP) for the <code>mlr3hf</code> Hard Task. The goal is to download a dataset from the Hugging Face Hub and convert it into a standard <code>mlr3</code> task using only native R tooling, without Python dependencies such as <code>reticulate</code>.</p>
+<p>Beyond the MVP code path, this report also highlights architecture constraints, performance choices, and a practical roadmap toward a production-quality CRAN package.</p>
 </section>
-<section id="fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api" class="level2">
-<h2 class="anchored" data-anchor-id="fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api">2.2 Fetch the metadata of the dataset from the Hugging Face Data Server API</h2>
-<p>According to the <a href="https://huggingface.co/docs/dataset-viewer/en/parquet">HF Data Viewer Document</a>, Datasets can be published in any format (CSV, JSONL, directories of images, etc.) to the Hub, and they are easily accessed with the Datasets library. For a more performant experience (especially when it comes to large datasets), the dataset viewer automatically converts every dataset to the Parquet format. This is a good news for us, since we don’t have to deal with diverse data formats and concentrate on Parquet via its <code>parquet</code> endpoint.</p>
-<p>Here I use <code>httr2</code> to visit the server since it is a modern and easy-to-use HTTP client library for R.</p>
+<section id="mvp-implementation-fkaprompts.chat-case-study" class="level2">
+<h2 class="anchored" data-anchor-id="mvp-implementation-fkaprompts.chat-case-study">2. MVP Implementation: <code>fka/prompts.chat</code> Case Study</h2>
+<p>This section demonstrates an end-to-end path built with <code>httr2</code>, <code>duckdb</code>, and <code>data.table</code>.</p>
+<section id="fetch-metadata-and-retrieve-the-parquet-url" class="level3">
+<h3 class="anchored" data-anchor-id="fetch-metadata-and-retrieve-the-parquet-url">3.1 Fetch Metadata and Retrieve the Parquet URL</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr2)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>req <span class="ot">&lt;-</span> <span class="fu">request</span>(<span class="st">"https://datasets-server.huggingface.co/parquet"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_url_query</span>(<span class="at">dataset =</span> <span class="st">"fka/prompts.chat"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_retry</span>(<span class="at">max_tries =</span> <span class="dv">3</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">req_perform</span>(req)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>()</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>meta <span class="sc">|&gt;</span> <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>dataset_id <span class="ot">&lt;-</span> <span class="st">"fka/prompts.chat"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>api_url <span class="ot">&lt;-</span> <span class="st">"https://datasets-server.huggingface.co/parquet"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>req <span class="ot">&lt;-</span> <span class="fu">request</span>(api_url) <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_url_query</span>(<span class="at">dataset =</span> dataset_id) <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_retry</span>(<span class="at">max_tries =</span> <span class="dv">3</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">req_perform</span>(req)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">resp_body_json</span>(resp)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">length</span>(meta<span class="sc">$</span>parquet_files) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>parquet_url <span class="ot">&lt;-</span> meta<span class="sc">$</span>parquet_files[[<span class="dv">1</span>]]<span class="sc">$</span>url</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Parquet URL retrieved:</span><span class="sc">\n</span><span class="st">"</span>, parquet_url, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>List of 4
- $ parquet_files:List of 1
-  ..$ :List of 6
-  .. ..$ dataset : chr "fka/prompts.chat"
-  .. ..$ config  : chr "default"
-  .. ..$ split   : chr "train"
-  .. ..$ url     : chr "https://huggingface.co/datasets/fka/prompts.chat/resolve/refs%2Fconvert%2Fparquet/default/train/0000.parquet"
-  .. ..$ filename: chr "0000.parquet"
-  .. ..$ size    : int 1724280
- $ pending      : list()
- $ failed       : list()
- $ partial      : logi FALSE</code></pre>
+<pre><code>Parquet URL retrieved:
+ https://huggingface.co/datasets/fka/prompts.chat/resolve/refs%2Fconvert%2Fparquet/default/train/0000.parquet </code></pre>
 </div>
 </div>
-<p>Among the metadata, the most important one is the Parquet URL, with which we can download the Parquet file to the local machine. The size of the Parquet file is 1.64 MB.</p>
 </section>
-<section id="download-the-parquet-file-to-the-local-machine" class="level2">
-<h2 class="anchored" data-anchor-id="download-the-parquet-file-to-the-local-machine">2.3 Download the Parquet file to the local machine</h2>
-<p>Firstly, I wanted to download the file and convert it into a <code>mlr3</code> task in one go.</p>
+<section id="stream-to-disk-to-protect-memory" class="level3">
+<h3 class="anchored" data-anchor-id="stream-to-disk-to-protect-memory">3.2 Stream to Disk to Protect Memory</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tmp_file <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".parquet"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">request</span>(parquet_url) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_perform</span>(<span class="at">path =</span> tmp_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;httr2_response&gt;
+GET https://cas-bridge.xethub.hf.co/xet-bridge-us/63990f21cc50af73d29ecfa3/022ab4c5690d8857591c6b1efab63e5a30a10ada1005ecb3137729d412e04729?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Credential=cas%2F20260304%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260304T154558Z&amp;X-Amz-Expires=3600&amp;X-Amz-Signature=5fa1f35c8d996826fed82b526401a2cbc1873bc0140baa7cc2aa807b4f861da4&amp;X-Amz-SignedHeaders=host&amp;X-Xet-Cas-Uid=public&amp;response-content-disposition=inline%3B+filename*%3DUTF-8%27%270000.parquet%3B+filename%3D%220000.parquet%22%3B&amp;x-amz-checksum-mode=ENABLED&amp;x-id=GetObject&amp;Expires=1772642758&amp;Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc3MjY0Mjc1OH19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2FzLWJyaWRnZS54ZXRodWIuaGYuY28veGV0LWJyaWRnZS11cy82Mzk5MGYyMWNjNTBhZjczZDI5ZWNmYTMvMDIyYWI0YzU2OTBkODg1NzU5MWM2YjFlZmFiNjNlNWEzMGExMGFkYTEwMDVlY2IzMTM3NzI5ZDQxMmUwNDcyOSoifV19&amp;Signature=rMp4HF-A1QEO91OijIxhseywHfsp7XVP7ODgNlSRkOKbRIxYaRp8Zkwfbgi257yulW12ST6NUeOQBSsqDHzJhUQn52mgkafla7FWsmFd23KgbuFnK0EwyHZ6Om%7Ei5vS6ZxUiIH7758yzbY7nzUI07uVgWLRye53n5Q0xd-d1fxa0fBJAh49b%7Ej%7Ej%7ED6tveVRT4hkG9%7EMwSrwl61vX7MF1xzGJJAmgXEd1wt5FkuFZCtlhKftCupg4eu8DN9204faxHaj6XOBpyZSg4ntd7tSRAXOw9lws5fKSAGUTuyyj46VWBIPzbggtGR6FTMVSXXcrI2XumJlfHDfyu5AksQpmg__&amp;Key-Pair-Id=K2L8F4GPSG1IFC
+Status: 200 OK
+Body: On disk '/var/folders/cd/8ncrly493_1101j5bf9zcx240000gn/T//Rtmpt9WyEO/file175b315062250.parquet' (1724280 bytes)</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Parquet saved to:"</span>, tmp_file, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Parquet saved to: /var/folders/cd/8ncrly493_1101j5bf9zcx240000gn/T//Rtmpt9WyEO/file175b315062250.parquet </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"File size (bytes):"</span>, <span class="fu">file.info</span>(tmp_file)<span class="sc">$</span>size, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>File size (bytes): 1724280 </code></pre>
+</div>
+</div>
+</section>
+<section id="query-with-duckdb-and-clean-with-data.table" class="level3">
+<h3 class="anchored" data-anchor-id="query-with-duckdb-and-clean-with-data.table">3.3 Query with DuckDB and Clean with data.table</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SELECT * FROM read_parquet(%s)"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dbQuoteString</span>(con, tmp_file)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(con, query)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">setDT</span>(data)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"for_devs"</span> <span class="sc">%in%</span> <span class="fu">names</span>(data)) {</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    data[, for_devs <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(for_devs)]</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"mlr3_row_id"</span> <span class="sc">%in%</span> <span class="fu">names</span>(data)) {</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    data[, mlr3_row_id <span class="sc">:</span><span class="er">=</span> <span class="cn">NULL</span>]</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                               act
+                            &lt;char&gt;
+1:              Ethereum Developer
+2:                  Linux Terminal
+3: English Translator and Improver
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               prompt
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               &lt;char&gt;
+1:                 Imagine you are an experienced Ethereum developer tasked with creating a smart contract for a blockchain messenger. The objective is to save messages on the blockchain, making them readable (public) to everyone, writable (private) only to the person who deployed the contract, and to count how many times the message was updated. Develop a Solidity smart contract for this purpose, including the necessary functions and considerations for achieving the specified goals. Please provide the code and any relevant explanations to ensure a clear understanding of the implementation.
+2:                                                                                                                                                                         I want you to act as a linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. do not write explanations. do not type commands unless I instruct you to do so. when i need to tell you something in english, i will do so by putting text inside curly brackets {like this}. my first command is pwd
+3: I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is "istanbulu cok seviyom burada olmak cok guzel"
+   for_devs   type contributor
+     &lt;fctr&gt; &lt;char&gt;      &lt;char&gt;
+1:     TRUE   TEXT  ameya-2003
+2:     TRUE   TEXT           f
+3:    FALSE   TEXT           f</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="construct-the-mlr3-classification-task" class="level3">
+<h3 class="anchored" data-anchor-id="construct-the-mlr3-classification-task">3.4 Construct the <code>mlr3</code> Classification Task</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="st">"for_devs"</span> <span class="sc">%in%</span> <span class="fu">names</span>(data))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task_classif</span>(data, <span class="at">target =</span> <span class="st">"for_devs"</span>, <span class="at">id =</span> <span class="st">"hf_prompts_task"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>task</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+── &lt;TaskClassif&gt; (1395x5) ──────────────────────────────────────────────────────
+• Target: for_devs
+• Target classes: FALSE (positive class, 93%), TRUE (7%)
+• Properties: twoclass
+• Features (4):
+  • chr (4): act, contributor, prompt, type</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="future-roadmap-and-api-design" class="level2">
+<h2 class="anchored" data-anchor-id="future-roadmap-and-api-design">3. Future Roadmap and API Design</h2>
+<section id="lessons-learned-from-easy-task-using-ostk" class="level3">
+<h3 class="anchored" data-anchor-id="lessons-learned-from-easy-task-using-ostk">3.1 Lessons Learned from Easy Task using <code>ostk</code></h3>
+<p>When doing the easy task, we learned the following lessons, and they should be considered in the future design.</p>
+</section>
+<section id="lazy-loading" class="level3">
+<h3 class="anchored" data-anchor-id="lazy-loading">3.1.1 Lazy Loading</h3>
+<p>While reading the <code>mlr3oml</code> source code, I noticed that when <code>ostk()</code> is called, it only downloads metadata. The actual data is downloaded only when <code>as_task</code> is used or when <code>$data$data</code> is accessed. This behavior should also be integrated into our design.</p>
+</section>
+<section id="caching-issue-very-large-datasets" class="level3">
+<h3 class="anchored" data-anchor-id="caching-issue-very-large-datasets">3.1.2 Caching issue: very large datasets</h3>
+<p>Very large datasets may consist of multiple Parquet files, which differs from the MVP where only a single file is handled. Users are also likely to want to use caching, so this needs to be handled properly.</p>
+</section>
+<section id="fallback" class="level3">
+<h3 class="anchored" data-anchor-id="fallback">3.1.3 Fallback</h3>
+<p>Has the HF data server really prepared proper Parquet files for all datasets? What if some are not ready? In that case, do we have no option, or is it necessary to download the original format (e.g., CSV) directly? Or should we just return an error? In addition to this, setting up Parquet is a heavy operation. For example, the compiling of <code>duckdb</code> costs more than half an hour. So we need to consider the performance impact of this operation. If the user does not want to use Parquet, we should not force them to use it.</p>
+</section>
+</section>
+<section id="robustness" class="level2">
+<h2 class="anchored" data-anchor-id="robustness">3.2 Robustness</h2>
+<p>At a basic level, we need robust engineering practices, such as checking HTTP status codes during network downloads. At a more advanced level, can we support resume-from-breakpoint downloads and multithreaded downloading?</p>
+</section>
+<section id="customized-tasks-usability-oriented-interfaces" class="level2">
+<h2 class="anchored" data-anchor-id="customized-tasks-usability-oriented-interfaces">3.3 Customized Tasks: usability-oriented interfaces</h2>
+<p>There are many advanced requirements for customized tasks, such as merging fields. Can we provide a more user-friendly interface so users do not need to manipulate <code>data.table</code> directly, manually compose view/query statements, or build <code>mlr3pipelines</code> by themselves?</p>
+</section>
+<section id="support-conversion-to-multiple-task-types" class="level2">
+<h2 class="anchored" data-anchor-id="support-conversion-to-multiple-task-types">3.4 Support conversion to multiple task types</h2>
+<p>Classification, regression, and Supervised Data Stream Classification. It seems <code>mlr3oml</code> previously could not handle task 7317 of type Supervised Data Stream Classification, and raised an error because the type was not recognized.</p>
+</section>
+<section id="deal-with-very-large-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="deal-with-very-large-datasets">3.5 Deal with very large datasets</h2>
+<p>Very large datasets: when we eventually handle truly large datasets (e.g., 100 GB) that cannot be loaded into a <code>data.table</code> at once, we may need lower-level solutions (such as modifying the DuckDB backend dictionary mapping table <code>col_info</code>).</p>
+<p>This is another engineering challenge caused by very large datasets. More challenges may appear later; this list only includes issues encountered so far.</p>
+</section>
+<section id="network-constraints-user-configurable-servers" class="level2">
+<h2 class="anchored" data-anchor-id="network-constraints-user-configurable-servers">3.6 Network constraints: user-configurable servers</h2>
+<p>For network-restricted hosts (e.g., AutoDL in China mainland) that cannot access the HF data server, we should not hard-code this URL. Users should be allowed to configure their own mirror endpoint.</p>
+</section>
+<section id="other-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="other-considerations">3.7 Other considerations</h2>
+<p>We can learn from existing solutions: how do Python-based approaches solve these problems?</p>
+<p>We need to study their source code to identify issues we may not have considered yet.</p>
+</section>
+<section id="try-to-do-it-at-once-wip" class="level2">
+<h2 class="anchored" data-anchor-id="try-to-do-it-at-once-wip">4. Try to do it at once [WIP]</h2>
+<p>I have already done the MVP implementation. Now with the lessons learned, why not do it at once?</p>
 
 
 <!-- -->
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -725,79 +909,171 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks"</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Cao Wei"</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 3</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. Introduction</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>This live report firstly documents the Minimum Viable Product (MVP) for the <span class="in">`mlr3hf`</span> Hard Task.</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>The goal is to download a dataset from the Hugging Face Hub and convert it into a standard <span class="in">`mlr3`</span> task using only native R tooling, without Python dependencies such as <span class="in">`reticulate`</span>.</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>Along the way, I will record the problems I encountered and the solutions I adopted. Besides, I will also communicate my thoughts on future development to fulfill an production-level package with regard to performance, robustness and reliability.</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>Secondly, I will summarize the engineering challenges for a production-level package and provide my current implementation: structure and logic.</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>Lastly, I will conclude this report and my further thoughts on the future development of this package.</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. MVP Implementation: `fka/prompts.chat` Case Study</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`fka/prompts.chat`</span><span class="co">](https://huggingface.co/datasets/fka/prompts.chat)</span> is an open-source platform where users can share, discover, and collect AI prompts from the community. The project can be self-hosted with customizable branding, themes, and authentication. The dataset contains 1334 rows and 5 columns: <span class="in">`act`</span>, <span class="in">`prompt`</span>, <span class="in">`for_devs`</span>, <span class="in">`type`</span>, <span class="in">`contributor`</span>.</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>The following environment details were detected on this machine on **2026-02-27**:</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Hardware model: <span class="in">`MacBook Pro`</span> (<span class="in">`MacBookPro16,1`</span>)</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>CPU: <span class="in">`Intel Core i7`</span> (<span class="in">`2.6 GHz`</span>)</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Memory: <span class="in">`32 GB`</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Operating system: <span class="in">`macOS 26.0.1`</span> (build <span class="in">`25A362`</span>)</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Kernel and architecture: <span class="in">`Darwin 25.0.0 x86_64`</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>R version: <span class="in">`R version 4.5.2 (2025-10-31)`</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Location: <span class="in">`Ottawa, Ontario, Canada`</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.1 Breaksdown of the Problem</span></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>The problem can be briefly broken down into the following steps:</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Fetch the metadata of the dataset from the Hugging Face Data Server API.</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Retrieve the Parquet URL from the metadata.</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Download the Parquet file to the local machine.</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Read the Parquet file and convert it into a <span class="in">`mlr3`</span> task.</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.2 Fetch the metadata of the dataset from the Hugging Face Data Server API</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>According to the <span class="co">[</span><span class="ot">HF Data Viewer Document</span><span class="co">](https://huggingface.co/docs/dataset-viewer/en/parquet)</span>, Datasets can be published in any format (CSV, JSONL, directories of images, etc.) to the Hub, and they are easily accessed with the Datasets library. For a more performant experience (especially when it comes to large datasets), the dataset viewer automatically converts every dataset to the Parquet format. This is a good news for us, since we don't have to deal with diverse data formats and concentrate on Parquet via its <span class="in">`parquet`</span> endpoint.</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>Here I use <span class="in">`httr2`</span> to visit the server since it is a modern and easy-to-use HTTP client library for R.</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr2)</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>req <span class="ot">&lt;-</span> <span class="fu">request</span>(<span class="st">"https://datasets-server.huggingface.co/parquet"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_url_query</span>(<span class="at">dataset =</span> <span class="st">"fka/prompts.chat"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_retry</span>(<span class="at">max_tries =</span> <span class="dv">3</span>)</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">req_perform</span>(req)</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>()</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>meta <span class="sc">|&gt;</span> <span class="fu">str</span>()</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>Among the metadata, the most important one is the Parquet URL, with which we can download the Parquet file to the local machine. The size of the Parquet file is 1.64 MB.</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.3 Download the Parquet file to the local machine</span></span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>Firstly, I wanted to download the file and convert it into a <span class="in">`mlr3`</span> task in one go.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Cao Wei"</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 3</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## 0. Local Environment Snapshot</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>Environment was detected locally on March 4, 2026.</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Item <span class="pp">|</span> Value <span class="pp">|</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OS Kernel <span class="pp">|</span> Darwin 25.0.0 x86_64 <span class="pp">|</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OS Version <span class="pp">|</span> macOS 26.0.1 (Build 25A362) <span class="pp">|</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Machine Model <span class="pp">|</span> MacBook Pro (MacBookPro16,1) <span class="pp">|</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CPU <span class="pp">|</span> Intel Core i7, 2.6 GHz, 6 cores <span class="pp">|</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Memory <span class="pp">|</span> 32 GB <span class="pp">|</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> R Version <span class="pp">|</span> R 4.5.2 (2025-10-31) <span class="pp">|</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> C Compiler (CC) <span class="pp">|</span> clang -std=gnu2x <span class="pp">|</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> C++ Compiler (CXX) <span class="pp">|</span> clang++ -std=gnu++17 <span class="pp">|</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Executive Summary and Task Objective</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>This live report documents the Minimum Viable Product (MVP) for the <span class="in">`mlr3hf`</span> Hard Task.</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>The goal is to download a dataset from the Hugging Face Hub and convert it into a standard <span class="in">`mlr3`</span> task using only native R tooling, without Python dependencies such as <span class="in">`reticulate`</span>.</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>Beyond the MVP code path, this report also highlights architecture constraints, performance choices, and a practical roadmap toward a production-quality CRAN package.</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. MVP Implementation: `fka/prompts.chat` Case Study</span></span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>This section demonstrates an end-to-end path built with <span class="in">`httr2`</span>, <span class="in">`duckdb`</span>, and <span class="in">`data.table`</span>.</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1 Fetch Metadata and Retrieve the Parquet URL</span></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr2)</span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>dataset_id <span class="ot">&lt;-</span> <span class="st">"fka/prompts.chat"</span></span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>api_url <span class="ot">&lt;-</span> <span class="st">"https://datasets-server.huggingface.co/parquet"</span></span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>req <span class="ot">&lt;-</span> <span class="fu">request</span>(api_url) <span class="sc">|&gt;</span></span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_url_query</span>(<span class="at">dataset =</span> dataset_id) <span class="sc">|&gt;</span></span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_retry</span>(<span class="at">max_tries =</span> <span class="dv">3</span>)</span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">req_perform</span>(req)</span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">resp_body_json</span>(resp)</span>
+<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">length</span>(meta<span class="sc">$</span>parquet_files) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a>parquet_url <span class="ot">&lt;-</span> meta<span class="sc">$</span>parquet_files[[<span class="dv">1</span>]]<span class="sc">$</span>url</span>
+<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Parquet URL retrieved:</span><span class="sc">\n</span><span class="st">"</span>, parquet_url, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.2 Stream to Disk to Protect Memory</span></span>
+<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a>tmp_file <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".parquet"</span>)</span>
+<span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a><span class="fu">request</span>(parquet_url) <span class="sc">|&gt;</span></span>
+<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req_perform</span>(<span class="at">path =</span> tmp_file)</span>
+<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Parquet saved to:"</span>, tmp_file, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"File size (bytes):"</span>, <span class="fu">file.info</span>(tmp_file)<span class="sc">$</span>size, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.3 Query with DuckDB and Clean with data.table</span></span>
+<span id="cb14-83"><a href="#cb14-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SELECT * FROM read_parquet(%s)"</span>,</span>
+<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dbQuoteString</span>(con, tmp_file)</span>
+<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(con, query)</span>
+<span id="cb14-97"><a href="#cb14-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a><span class="fu">setDT</span>(data)</span>
+<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-100"><a href="#cb14-100" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"for_devs"</span> <span class="sc">%in%</span> <span class="fu">names</span>(data)) {</span>
+<span id="cb14-101"><a href="#cb14-101" aria-hidden="true" tabindex="-1"></a>    data[, for_devs <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(for_devs)]</span>
+<span id="cb14-102"><a href="#cb14-102" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-103"><a href="#cb14-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-104"><a href="#cb14-104" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"mlr3_row_id"</span> <span class="sc">%in%</span> <span class="fu">names</span>(data)) {</span>
+<span id="cb14-105"><a href="#cb14-105" aria-hidden="true" tabindex="-1"></a>    data[, mlr3_row_id <span class="sc">:</span><span class="er">=</span> <span class="cn">NULL</span>]</span>
+<span id="cb14-106"><a href="#cb14-106" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-107"><a href="#cb14-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-108"><a href="#cb14-108" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data, <span class="dv">3</span>)</span>
+<span id="cb14-109"><a href="#cb14-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-110"><a href="#cb14-110" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-111"><a href="#cb14-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-112"><a href="#cb14-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-113"><a href="#cb14-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.4 Construct the `mlr3` Classification Task</span></span>
+<span id="cb14-114"><a href="#cb14-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-117"><a href="#cb14-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-118"><a href="#cb14-118" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3)</span>
+<span id="cb14-119"><a href="#cb14-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-120"><a href="#cb14-120" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="st">"for_devs"</span> <span class="sc">%in%</span> <span class="fu">names</span>(data))</span>
+<span id="cb14-121"><a href="#cb14-121" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">as_task_classif</span>(data, <span class="at">target =</span> <span class="st">"for_devs"</span>, <span class="at">id =</span> <span class="st">"hf_prompts_task"</span>)</span>
+<span id="cb14-122"><a href="#cb14-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-123"><a href="#cb14-123" aria-hidden="true" tabindex="-1"></a>task</span>
+<span id="cb14-124"><a href="#cb14-124" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-125"><a href="#cb14-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-126"><a href="#cb14-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-127"><a href="#cb14-127" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Future Roadmap and API Design</span></span>
+<span id="cb14-128"><a href="#cb14-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-129"><a href="#cb14-129" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1 Lessons Learned from Easy Task using `ostk`</span></span>
+<span id="cb14-130"><a href="#cb14-130" aria-hidden="true" tabindex="-1"></a>When doing the easy task, we learned the following lessons, and they should be considered in the future design.</span>
+<span id="cb14-131"><a href="#cb14-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-132"><a href="#cb14-132" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1.1 Lazy Loading</span></span>
+<span id="cb14-133"><a href="#cb14-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-134"><a href="#cb14-134" aria-hidden="true" tabindex="-1"></a>While reading the <span class="in">`mlr3oml`</span> source code, I noticed that when <span class="in">`ostk()`</span> is called, it only downloads metadata. The actual data is downloaded only when <span class="in">`as_task`</span> is used or when <span class="in">`$data$data`</span> is accessed. This behavior should also be integrated into our design.</span>
+<span id="cb14-135"><a href="#cb14-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-136"><a href="#cb14-136" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1.2 Caching issue: very large datasets</span></span>
+<span id="cb14-137"><a href="#cb14-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-138"><a href="#cb14-138" aria-hidden="true" tabindex="-1"></a>Very large datasets may consist of multiple Parquet files, which differs from the MVP where only a single file is handled.</span>
+<span id="cb14-139"><a href="#cb14-139" aria-hidden="true" tabindex="-1"></a>Users are also likely to want to use caching, so this needs to be handled properly.</span>
+<span id="cb14-140"><a href="#cb14-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-141"><a href="#cb14-141" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1.3 Fallback</span></span>
+<span id="cb14-142"><a href="#cb14-142" aria-hidden="true" tabindex="-1"></a>Has the HF data server really prepared proper Parquet files for all datasets? What if some are not ready? In that case, do we have no option, or is it necessary to download the original format (e.g., CSV) directly? Or should we just return an error?</span>
+<span id="cb14-143"><a href="#cb14-143" aria-hidden="true" tabindex="-1"></a>In addition to this, setting up Parquet is a heavy operation. For example, the compiling of <span class="in">`duckdb`</span> costs more than half an hour. So we need to consider the performance impact of this operation. If the user does not want to use Parquet, we should not force them to use it.</span>
+<span id="cb14-144"><a href="#cb14-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-145"><a href="#cb14-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.2 Robustness</span></span>
+<span id="cb14-146"><a href="#cb14-146" aria-hidden="true" tabindex="-1"></a>At a basic level, we need robust engineering practices, such as checking HTTP status codes during network downloads. At a more advanced level, can we support resume-from-breakpoint downloads and multithreaded downloading?</span>
+<span id="cb14-147"><a href="#cb14-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-148"><a href="#cb14-148" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.3 Customized Tasks: usability-oriented interfaces</span></span>
+<span id="cb14-149"><a href="#cb14-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-150"><a href="#cb14-150" aria-hidden="true" tabindex="-1"></a>There are many advanced requirements for customized tasks, such as merging fields. Can we provide a more user-friendly interface so users do not need to manipulate <span class="in">`data.table`</span> directly, manually compose view/query statements, or build <span class="in">`mlr3pipelines`</span> by themselves?</span>
+<span id="cb14-151"><a href="#cb14-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-152"><a href="#cb14-152" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.4 Support conversion to multiple task types</span></span>
+<span id="cb14-153"><a href="#cb14-153" aria-hidden="true" tabindex="-1"></a>Classification, regression, and Supervised Data Stream Classification. It seems <span class="in">`mlr3oml`</span> previously could not handle task 7317 of type Supervised Data Stream Classification, and raised an error because the type was not recognized.</span>
+<span id="cb14-154"><a href="#cb14-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-155"><a href="#cb14-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.5 Deal with very large datasets</span></span>
+<span id="cb14-156"><a href="#cb14-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-157"><a href="#cb14-157" aria-hidden="true" tabindex="-1"></a>Very large datasets: when we eventually handle truly large datasets (e.g., 100 GB) that cannot be loaded into a <span class="in">`data.table`</span> at once, we may need lower-level solutions (such as modifying the DuckDB backend dictionary mapping table <span class="in">`col_info`</span>).</span>
+<span id="cb14-158"><a href="#cb14-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-159"><a href="#cb14-159" aria-hidden="true" tabindex="-1"></a>This is another engineering challenge caused by very large datasets. More challenges may appear later; this list only includes issues encountered so far.</span>
+<span id="cb14-160"><a href="#cb14-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.6 Network constraints: user-configurable servers</span></span>
+<span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a>For network-restricted hosts (e.g., AutoDL in China mainland) that cannot access the HF data server, we should not hard-code this URL. Users should be allowed to configure their own mirror endpoint.</span>
+<span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.7 Other considerations</span></span>
+<span id="cb14-166"><a href="#cb14-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-167"><a href="#cb14-167" aria-hidden="true" tabindex="-1"></a>We can learn from existing solutions: how do Python-based approaches solve these problems?</span>
+<span id="cb14-168"><a href="#cb14-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-169"><a href="#cb14-169" aria-hidden="true" tabindex="-1"></a>We need to study their source code to identify issues we may not have considered yet.</span>
+<span id="cb14-170"><a href="#cb14-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-171"><a href="#cb14-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Try to do it at once [WIP]</span></span>
+<span id="cb14-172"><a href="#cb14-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-173"><a href="#cb14-173" aria-hidden="true" tabindex="-1"></a>I have already done the MVP implementation. Now with the lessons learned, why not do it at once?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
