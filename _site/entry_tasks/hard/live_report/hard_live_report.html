@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Cao Wei">
-<meta name="dcterms.date" content="2026-02-27">
+<meta name="dcterms.date" content="2026-03-04">
 
 <title>mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks – Cao Wei’s mlr3hf Journey</title>
 <style>
@@ -131,6 +131,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../../entry_tasks/easy/live_report/easy_task_live_report.html"> 
+<span class="menu-text">Easy Task</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="../../../entry_tasks/hard/live_report/hard_live_report.html" aria-current="page"> 
 <span class="menu-text">Hard Task</span></a>
   </li>  
@@ -155,6 +159,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#breaksdown-of-the-problem" id="toc-breaksdown-of-the-problem" class="nav-link" data-scroll-target="#breaksdown-of-the-problem">2.1 Breaksdown of the Problem</a></li>
   <li><a href="#fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api" id="toc-fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api" class="nav-link" data-scroll-target="#fetch-the-metadata-of-the-dataset-from-the-hugging-face-data-server-api">2.2 Fetch the metadata of the dataset from the Hugging Face Data Server API</a></li>
+  <li><a href="#download-the-parquet-file-to-the-local-machine" id="toc-download-the-parquet-file-to-the-local-machine" class="nav-link" data-scroll-target="#download-the-parquet-file-to-the-local-machine">2.3 Download the Parquet file to the local machine</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -181,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 27, 2026</p>
+      <p class="date">March 4, 2026</p>
     </div>
   </div>
   
@@ -250,12 +255,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   .. ..$ split   : chr "train"
   .. ..$ url     : chr "https://huggingface.co/datasets/fka/prompts.chat/resolve/refs%2Fconvert%2Fparquet/default/train/0000.parquet"
   .. ..$ filename: chr "0000.parquet"
-  .. ..$ size    : int 1640466
+  .. ..$ size    : int 1724280
  $ pending      : list()
  $ failed       : list()
  $ partial      : logi FALSE</code></pre>
 </div>
 </div>
+<p>Among the metadata, the most important one is the Parquet URL, with which we can download the Parquet file to the local machine. The size of the Parquet file is 1.64 MB.</p>
+</section>
+<section id="download-the-parquet-file-to-the-local-machine" class="level2">
+<h2 class="anchored" data-anchor-id="download-the-parquet-file-to-the-local-machine">2.3 Download the Parquet file to the local machine</h2>
+<p>Firstly, I wanted to download the file and convert it into a <code>mlr3</code> task in one go.</p>
 
 
 <!-- -->
@@ -388,7 +398,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/weicaocw\.github\.io\/mlr3hf\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
