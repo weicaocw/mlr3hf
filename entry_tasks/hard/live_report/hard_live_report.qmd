@@ -1,0 +1,73 @@
+---
+title: "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks"
+author: "Cao Wei"
+date: today
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# 1. Introduction
+
+This live report firstly documents the Minimum Viable Product (MVP) for the `mlr3hf` Hard Task.
+The goal is to download a dataset from the Hugging Face Hub and convert it into a standard `mlr3` task using only native R tooling, without Python dependencies such as `reticulate`.
+Along the way, I will record the problems I encountered and the solutions I adopted. Besides, I will also communicate my thoughts on future development to fulfill an production-level package with regard to performance, robustness and reliability.
+
+Secondly, I will summarize the engineering challenges for a production-level package and provide my current implementation: structure and logic.
+
+Lastly, I will conclude this report and my further thoughts on the future development of this package.
+
+# 2. MVP Implementation: `fka/prompts.chat` Case Study
+[`fka/prompts.chat`](https://huggingface.co/datasets/fka/prompts.chat) is an open-source platform where users can share, discover, and collect AI prompts from the community. The project can be self-hosted with customizable branding, themes, and authentication. The dataset contains 1334 rows and 5 columns: `act`, `prompt`, `for_devs`, `type`, `contributor`.
+
+
+The following environment details were detected on this machine on **2026-02-27**:
+
+- Hardware model: `MacBook Pro` (`MacBookPro16,1`)
+- CPU: `Intel Core i7` (`2.6 GHz`)
+- Memory: `32 GB`
+- Operating system: `macOS 26.0.1` (build `25A362`)
+- Kernel and architecture: `Darwin 25.0.0 x86_64`
+- R version: `R version 4.5.2 (2025-10-31)`
+- Location: `Ottawa, Ontario, Canada`
+
+## 2.1 Breaksdown of the Problem
+
+The problem can be briefly broken down into the following steps:
+
+1. Fetch the metadata of the dataset from the Hugging Face Data Server API.
+2. Retrieve the Parquet URL from the metadata.
+3. Download the Parquet file to the local machine.
+4. Read the Parquet file and convert it into a `mlr3` task.
+
+## 2.2 Fetch the metadata of the dataset from the Hugging Face Data Server API
+According to the [HF Data Viewer Document](https://huggingface.co/docs/dataset-viewer/en/parquet), Datasets can be published in any format (CSV, JSONL, directories of images, etc.) to the Hub, and they are easily accessed with the Datasets library. For a more performant experience (especially when it comes to large datasets), the dataset viewer automatically converts every dataset to the Parquet format. This is a good news for us, since we don't have to deal with diverse data formats and concentrate on Parquet via its `parquet` endpoint.
+
+Here I use `httr2` to visit the server since it is a modern and easy-to-use HTTP client library for R.
+
+```{r}
+library(httr2)
+
+req <- request("https://datasets-server.huggingface.co/parquet") |>
+    req_url_query(dataset = "fka/prompts.chat") |>
+    req_retry(max_tries = 3)
+
+resp <- req_perform(req)
+
+meta <- resp |> resp_body_json()
+
+meta |> str()
+```
+
+Among the metadata, the most important one is the Parquet URL, with which we can download the Parquet file to the local machine. The size of the Parquet file is 1.64 MB.
+
+## 2.3 Download the Parquet file to the local machine
+Firstly, I wanted to download the file and convert it into a `mlr3` task in one go.

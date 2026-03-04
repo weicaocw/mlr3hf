@@ -1,0 +1,134 @@
+---
+title: "mlr3hf Hard Task: Downloading and Converting Hugging Face Datasets to mlr3 Tasks"
+author: "Cao Wei"
+date: today
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 1. Executive Summary and Task Objective
+
+This live report documents the Minimum Viable Product (MVP) for the `mlr3hf` Hard Task.
+The goal is to download a dataset from the Hugging Face Hub and convert it into a standard `mlr3` task using only native R tooling, without Python dependencies such as `reticulate`.
+
+Beyond the MVP code path, this report also highlights architecture constraints, performance choices, and a practical roadmap toward a production-quality CRAN package.
+
+## 2. Architecture Considerations and Pitfalls
+
+Before implementation, it is useful to analyze the full data flow from API metadata to model-ready tabular data.
+A robust Hugging Face interface in R must address four core concerns:
+
+### 2.1 Lazy Loading and Out-of-Memory Risk
+
+Large datasets should avoid eager in-memory loading.
+Binary payloads should be streamed to disk whenever possible, then queried in chunks or lazily via an engine such as DuckDB.
+
+### 2.2 Fallback Strategy and Format Compatibility
+
+Different datasets may expose different file layouts and shard patterns.
+The interface should support fallback behavior when one route fails (for example, alternate splits or multiple parquet shards).
+
+### 2.3 Network Robustness and Custom Mirror Support
+
+Dataset access is network-dependent.
+Reliable retry logic, clear HTTP error diagnostics, and configurable endpoints are required for stable execution in diverse environments.
+
+### 2.4 Rationale for "No Reticulate"
+
+A pure-R stack reduces cross-language runtime complexity, improves reproducibility, and makes packaging and CI easier for CRAN workflows.
+
+## 3. MVP Implementation: `fka/prompts.chat` Case Study
+
+This section demonstrates an end-to-end path built with `httr2`, `duckdb`, and `data.table`.
+
+### 3.1 Fetch Metadata and Retrieve the Parquet URL
+
+```{r}
+library(httr2)
+
+dataset_id <- "fka/prompts.chat"
+api_url <- "https://datasets-server.huggingface.co/parquet"
+
+req <- request(api_url) |>
+  req_url_query(dataset = dataset_id) |>
+  req_retry(max_tries = 3)
+
+resp <- req_perform(req)
+meta <- resp_body_json(resp)
+
+stopifnot(length(meta$parquet_files) > 0)
+parquet_url <- meta$parquet_files[[1]]$url
+
+cat("Parquet URL retrieved:\n", parquet_url, "\n")
+```
+
+### 3.2 Stream to Disk to Protect Memory
+
+```{r}
+tmp_file <- tempfile(fileext = ".parquet")
+
+request(parquet_url) |>
+  req_perform(path = tmp_file)
+
+cat("Parquet saved to:", tmp_file, "\n")
+cat("File size (bytes):", file.info(tmp_file)$size, "\n")
+```
+
+### 3.3 Query with DuckDB and Clean with data.table
+
+```{r}
+library(DBI)
+library(duckdb)
+library(data.table)
+
+con <- dbConnect(duckdb())
+query <- sprintf(
+  "SELECT * FROM read_parquet(%s)",
+  dbQuoteString(con, tmp_file)
+)
+data <- dbGetQuery(con, query)
+
+setDT(data)
+
+if ("for_devs" %in% names(data)) {
+  data[, for_devs := as.factor(for_devs)]
+}
+
+if ("mlr3_row_id" %in% names(data)) {
+  data[, mlr3_row_id := NULL]
+}
+
+head(data, 3)
+
+dbDisconnect(con, shutdown = TRUE)
+```
+
+### 3.4 Construct the `mlr3` Classification Task
+
+```{r}
+library(mlr3)
+
+stopifnot("for_devs" %in% names(data))
+task <- as_task_classif(data, target = "for_devs", id = "hf_prompts_task")
+
+task
+```
+
+## 4. Future Roadmap and API Design
+
+For a production `mlr3hf` package, the MVP logic can be wrapped into higher-level APIs:
+
+1. User-facing convenience wrappers such as `hftsk("fka/prompts.chat", target = "for_devs")`.
+2. Automatic multi-file handling for sharded parquet datasets using DuckDB globbing (for example, `read_parquet('*.parquet')`).
+3. Seamless interoperability with `mlr3pipelines` for advanced feature engineering while keeping `mlr3hf` lightweight.
+4. More defensive production behavior: schema checks, type contracts, and resumable downloads.
+
