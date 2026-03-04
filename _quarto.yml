@@ -1,6 +1,9 @@
 project:
   type: website
 
+execute:
+  freeze: auto
+  
 website:
   title: "Cao Wei's mlr3hf Journey"
   description: "GSoC 2026 mlr3hf Project Reports"
