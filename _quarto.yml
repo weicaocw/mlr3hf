@@ -13,6 +13,8 @@ website:
         href: index.qmd
       - text: "Easy Task"
         href: entry_tasks/easy/live_report/easy_task_live_report.qmd
+      - text: "Hard Task"
+        href: entry_tasks/hard/live_report/hard_live_report.qmd
 
 format:
   html:
